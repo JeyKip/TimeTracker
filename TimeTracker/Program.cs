@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TimeTracker.Services.SignIn;
 
 namespace TimeTracker
 {
@@ -41,6 +42,7 @@ namespace TimeTracker
                     x.AddNLog();
                 })
                 .AddTransient<Main>()
+                .AddTransient<SignInService>()
                 .BuildServiceProvider();
         }
     }

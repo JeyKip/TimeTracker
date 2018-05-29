@@ -11,37 +11,28 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TimeTracker.Services.SignIn;
 using TimeTracker.WebView;
 
 namespace TimeTracker
 {
     public partial class Main : Form
     {
-        #region Fields and Properties
+        #region Fields and properties
 
-        private OidcClient _oidcClient;
-        private string _accessTokenDisplay;
-        private string _refreshToken;
+        private readonly SignInService _signInService;
+        private readonly ILogger<Main> _logger;
 
         #endregion
 
         #region Constructors
 
-        public Main(ILogger<Main> logger)
+        public Main(ILogger<Main> logger, SignInService signInService)
         {
             InitializeComponent();
 
-            var options = new OidcClientOptions
-            {
-                Authority = "https://demo.identityserver.io",
-                ClientId = "native.hybrid",
-                Scope = "openid email api offline_access",
-                RedirectUri = "http://localhost/winforms.client",
-
-                Browser = new WinFormsEmbeddedBrowser()
-            };
-
-            _oidcClient = new OidcClient(options);
+            _logger = logger;
+            _signInService = signInService;
         }
 
         #endregion
@@ -51,6 +42,7 @@ namespace TimeTracker
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+            RefreshMenuItems();
         }
 
         protected override void OnResize(EventArgs e)
@@ -95,6 +87,44 @@ namespace TimeTracker
             OpenFromTray();
         }
 
+        private async void menuItemLogin_Click(object sender, EventArgs e)
+        {
+            _logger.LogDebug("test");
+            try
+            {
+                var result = await _signInService.SignInAsync();
+                if (result.IsError)
+                {
+                    MessageBox.Show(this, result.Error, "Login", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    UserAuthorized(false);
+                }
+                else {
+                    UserAuthorized(true);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message, "Login", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _logger.LogError(ex.ToString());
+                UserAuthorized(false);
+            }
+            RefreshMenuItems();
+        }
+
+        private async void menuItemLogout_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                await _signInService.SignOutAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message, "Logout", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _logger.LogError(ex.ToString());
+            }
+            RefreshMenuItems();
+        }
+
         #endregion
 
         #region Private Methods
@@ -115,48 +145,33 @@ namespace TimeTracker
             systemTrayIcon.Visible = false;
         }
 
+        private void RefreshMenuItems() {
+            menuItemLogin.Enabled = !_signInService.IsAuthorized;
+            menuItemLogout.Enabled = _signInService.IsAuthorized;
+            panelInfo.Visible = _signInService.IsAuthorized;
+        }
+
+        private void UserAuthorized(bool authorized)
+        {
+            if (authorized)
+            {
+                lblUserValue.Text = _signInService.UserDisplayName;
+            }
+            else {
+                lblUserValue.Text = string.Empty;
+            }
+        }
+
         #endregion
 
-        private void panel1_Paint(object sender, PaintEventArgs e)
+        private void menuItemExit_Click(object sender, EventArgs e)
         {
-
+            Application.Exit();
         }
 
-        private async void btnLogin_Click(object sender, EventArgs e)
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            var result = await _oidcClient.LoginAsync(new LoginRequest { BrowserDisplayMode = DisplayMode.Visible });
-
-            if (result.IsError)
-            {
-                MessageBox.Show(this, result.Error, "Login", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            else
-            {
-                _accessTokenDisplay = result.AccessToken;
-
-                var sb = new StringBuilder(128);
-                foreach (var claim in result.User.Claims)
-                {
-                    sb.AppendLine($"{claim.Type}: {claim.Value}");
-                }
-
-                if (!string.IsNullOrWhiteSpace(result.RefreshToken))
-                {
-                    sb.AppendLine($"refresh token: {result.RefreshToken}");
-                    _refreshToken = result.RefreshToken;
-                }
-
-                System.Diagnostics.Debug.WriteLine(sb.ToString());
-
-                //_apiClient = new HttpClient(result.RefreshTokenHandler);
-                //_apiClient.BaseAddress = new Uri("https://demo.identityserver.io/api/");
-            }
-        }
-
-        private async void btnLogout_Click(object sender, EventArgs e)
-        {
-            await _oidcClient.LogoutAsync();
-            _accessTokenDisplay = string.Empty;
+            menuItemLogin_Click(sender, new EventArgs());
         }
     }
 }

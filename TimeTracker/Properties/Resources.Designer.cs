@@ -59,5 +59,14 @@ namespace TimeTracker.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to email.
+        /// </summary>
+        internal static string DisplayNameClaimType {
+            get {
+                return ResourceManager.GetString("DisplayNameClaimType", resourceCulture);
+            }
+        }
     }
 }
