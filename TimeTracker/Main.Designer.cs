@@ -35,7 +35,11 @@
             this.systemTrayMenuOpen = new System.Windows.Forms.ToolStripMenuItem();
             this.systemTrayMenuSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.systemTrayMenuClose = new System.Windows.Forms.ToolStripMenuItem();
+            this.loginPanel = new System.Windows.Forms.Panel();
+            this.btnLogin = new System.Windows.Forms.Button();
+            this.btnLogout = new System.Windows.Forms.Button();
             this.systemTrayIconContextMenu.SuspendLayout();
+            this.loginPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // systemTrayIcon
@@ -56,37 +60,70 @@
             this.systemTrayMenuSeparator,
             this.systemTrayMenuClose});
             this.systemTrayIconContextMenu.Name = "systemTrayIconContextMenu";
-            this.systemTrayIconContextMenu.Size = new System.Drawing.Size(181, 76);
+            this.systemTrayIconContextMenu.Size = new System.Drawing.Size(104, 54);
             // 
             // systemTrayMenuOpen
             // 
             this.systemTrayMenuOpen.Name = "systemTrayMenuOpen";
-            this.systemTrayMenuOpen.Size = new System.Drawing.Size(180, 22);
+            this.systemTrayMenuOpen.Size = new System.Drawing.Size(103, 22);
             this.systemTrayMenuOpen.Text = "Open";
             this.systemTrayMenuOpen.Click += new System.EventHandler(this.SystemTrayMenuOpen_Click);
             // 
             // systemTrayMenuSeparator
             // 
             this.systemTrayMenuSeparator.Name = "systemTrayMenuSeparator";
-            this.systemTrayMenuSeparator.Size = new System.Drawing.Size(177, 6);
+            this.systemTrayMenuSeparator.Size = new System.Drawing.Size(100, 6);
             // 
             // systemTrayMenuClose
             // 
             this.systemTrayMenuClose.Name = "systemTrayMenuClose";
-            this.systemTrayMenuClose.Size = new System.Drawing.Size(180, 22);
+            this.systemTrayMenuClose.Size = new System.Drawing.Size(103, 22);
             this.systemTrayMenuClose.Text = "Exit";
             this.systemTrayMenuClose.Click += new System.EventHandler(this.SystemTrayMenuClose_Click);
+            // 
+            // loginPanel
+            // 
+            this.loginPanel.Controls.Add(this.btnLogout);
+            this.loginPanel.Controls.Add(this.btnLogin);
+            this.loginPanel.Location = new System.Drawing.Point(-3, -1);
+            this.loginPanel.Name = "loginPanel";
+            this.loginPanel.Size = new System.Drawing.Size(466, 187);
+            this.loginPanel.TabIndex = 1;
+            this.loginPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
+            // 
+            // btnLogin
+            // 
+            this.btnLogin.Location = new System.Drawing.Point(335, 147);
+            this.btnLogin.Name = "btnLogin";
+            this.btnLogin.Size = new System.Drawing.Size(128, 37);
+            this.btnLogin.TabIndex = 0;
+            this.btnLogin.Text = "Login";
+            this.btnLogin.UseVisualStyleBackColor = true;
+            this.btnLogin.Click += new System.EventHandler(this.btnLogin_Click);
+            // 
+            // btnLogout
+            // 
+            this.btnLogout.Location = new System.Drawing.Point(201, 147);
+            this.btnLogout.Name = "btnLogout";
+            this.btnLogout.Size = new System.Drawing.Size(128, 37);
+            this.btnLogout.TabIndex = 0;
+            this.btnLogout.Text = "Logout";
+            this.btnLogout.UseVisualStyleBackColor = true;
+            this.btnLogout.Visible = false;
+            this.btnLogout.Click += new System.EventHandler(this.btnLogout_Click);
             // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(461, 186);
+            this.Controls.Add(this.loginPanel);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Time Tracker";
             this.systemTrayIconContextMenu.ResumeLayout(false);
+            this.loginPanel.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -98,6 +135,9 @@
         private System.Windows.Forms.ToolStripMenuItem systemTrayMenuClose;
         private System.Windows.Forms.ToolStripMenuItem systemTrayMenuOpen;
         private System.Windows.Forms.ToolStripSeparator systemTrayMenuSeparator;
+        private System.Windows.Forms.Panel loginPanel;
+        private System.Windows.Forms.Button btnLogin;
+        private System.Windows.Forms.Button btnLogout;
     }
 }
 
