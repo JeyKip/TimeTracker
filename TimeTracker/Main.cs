@@ -18,14 +18,21 @@ namespace TimeTracker
 {
     public partial class Main : Form
     {
+        #region Fields and properties
+
         private readonly SignInService _signInService;
+        private readonly ILogger<Main> _logger;
+
+        #endregion
+
         #region Constructors
 
-        public Main(ILogger<Main> logger)
+        public Main(ILogger<Main> logger, SignInService signInService)
         {
             InitializeComponent();
 
-            _signInService = new SignInService();
+            _logger = logger;
+            _signInService = signInService;
         }
 
         #endregion
@@ -35,6 +42,7 @@ namespace TimeTracker
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+            RefreshMenuItems();
         }
 
         protected override void OnResize(EventArgs e)
@@ -81,19 +89,26 @@ namespace TimeTracker
 
         private async void menuItemLogin_Click(object sender, EventArgs e)
         {
+            _logger.LogDebug("test");
             try
             {
                 var result = await _signInService.SignInAsync();
                 if (result.IsError)
                 {
                     MessageBox.Show(this, result.Error, "Login", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    UserAuthorized(false);
+                }
+                else {
+                    UserAuthorized(true);
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show(this, ex.Message, "Login", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                // Logger.Error(ex);
+                _logger.LogError(ex.ToString());
+                UserAuthorized(false);
             }
+            RefreshMenuItems();
         }
 
         private async void menuItemLogout_Click(object sender, EventArgs e)
@@ -105,8 +120,9 @@ namespace TimeTracker
             catch (Exception ex)
             {
                 MessageBox.Show(this, ex.Message, "Logout", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                // Logger.Error(ex);
+                _logger.LogError(ex.ToString());
             }
+            RefreshMenuItems();
         }
 
         #endregion
@@ -129,11 +145,33 @@ namespace TimeTracker
             systemTrayIcon.Visible = false;
         }
 
+        private void RefreshMenuItems() {
+            menuItemLogin.Enabled = !_signInService.IsAuthorized;
+            menuItemLogout.Enabled = _signInService.IsAuthorized;
+            panelInfo.Visible = _signInService.IsAuthorized;
+        }
+
+        private void UserAuthorized(bool authorized)
+        {
+            if (authorized)
+            {
+                lblUserValue.Text = _signInService.UserDisplayName;
+            }
+            else {
+                lblUserValue.Text = string.Empty;
+            }
+        }
+
         #endregion
 
         private void menuItemExit_Click(object sender, EventArgs e)
         {
             Application.Exit();
+        }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            menuItemLogin_Click(sender, new EventArgs());
         }
     }
 }
