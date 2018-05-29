@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,7 +35,11 @@ namespace TimeTracker
         {
             //setup our DI
             _serviceProvider = new ServiceCollection()
-                .AddLogging()
+                .AddLogging(x =>
+                {
+                    x.SetMinimumLevel(LogLevel.Debug);
+                    x.AddNLog();
+                })
                 .AddTransient<Main>()
                 .BuildServiceProvider();
         }
