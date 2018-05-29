@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,6 +9,12 @@ namespace TimeTracker
 {
     static class Program
     {
+        #region Private
+
+        static IServiceProvider _serviceProvider;
+
+        #endregion
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -16,7 +23,19 @@ namespace TimeTracker
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Main());
+
+            BootstrapIoCContainer();
+
+            Application.Run(_serviceProvider.GetService<Main>());
+        }
+
+        static void BootstrapIoCContainer()
+        {
+            //setup our DI
+            _serviceProvider = new ServiceCollection()
+                .AddLogging()
+                .AddTransient<Main>()
+                .BuildServiceProvider();
         }
     }
 }

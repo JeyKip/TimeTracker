@@ -1,5 +1,7 @@
 ﻿using IdentityModel.OidcClient;
 using IdentityModel.OidcClient.Browser;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -25,7 +27,7 @@ namespace TimeTracker
 
         #region Constructors
 
-        public Main()
+        public Main(ILogger<Main> logger)
         {
             InitializeComponent();
 
