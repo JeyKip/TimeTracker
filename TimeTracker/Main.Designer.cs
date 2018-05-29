@@ -36,22 +36,23 @@
             this.systemTrayMenuSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.systemTrayMenuClose = new System.Windows.Forms.ToolStripMenuItem();
             this.mainPanel = new System.Windows.Forms.Panel();
+            this.panelInfo = new System.Windows.Forms.Panel();
+            this.btnStop = new System.Windows.Forms.Button();
+            this.btnTrack = new System.Windows.Forms.Button();
+            this.lblUserValue = new System.Windows.Forms.Label();
+            this.lblUser = new System.Windows.Forms.Label();
+            this.linkLabelLogin = new System.Windows.Forms.LinkLabel();
+            this.labelLogin = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.mainToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuItemLogin = new System.Windows.Forms.ToolStripMenuItem();
             this.menuItemLogout = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.menuItemExit = new System.Windows.Forms.ToolStripMenuItem();
-            this.linkLabelLogin = new System.Windows.Forms.LinkLabel();
-            this.labelLogin = new System.Windows.Forms.Label();
-            this.panelInfo = new System.Windows.Forms.Panel();
-            this.lblUser = new System.Windows.Forms.Label();
-            this.lblUserValue = new System.Windows.Forms.Label();
-            this.btnTrack = new System.Windows.Forms.Button();
             this.systemTrayIconContextMenu.SuspendLayout();
             this.mainPanel.SuspendLayout();
-            this.menuStrip1.SuspendLayout();
             this.panelInfo.SuspendLayout();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // systemTrayIcon
@@ -104,6 +105,82 @@
             this.mainPanel.Size = new System.Drawing.Size(466, 187);
             this.mainPanel.TabIndex = 1;
             // 
+            // panelInfo
+            // 
+            this.panelInfo.Controls.Add(this.btnStop);
+            this.panelInfo.Controls.Add(this.btnTrack);
+            this.panelInfo.Controls.Add(this.lblUserValue);
+            this.panelInfo.Controls.Add(this.lblUser);
+            this.panelInfo.Location = new System.Drawing.Point(3, 27);
+            this.panelInfo.Name = "panelInfo";
+            this.panelInfo.Size = new System.Drawing.Size(463, 160);
+            this.panelInfo.TabIndex = 5;
+            // 
+            // btnStop
+            // 
+            this.btnStop.Enabled = false;
+            this.btnStop.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.btnStop.Location = new System.Drawing.Point(352, 120);
+            this.btnStop.Name = "btnStop";
+            this.btnStop.Size = new System.Drawing.Size(100, 28);
+            this.btnStop.TabIndex = 3;
+            this.btnStop.Text = "Stop";
+            this.btnStop.UseVisualStyleBackColor = true;
+            this.btnStop.Click += new System.EventHandler(this.BtnStop_Click);
+            // 
+            // btnTrack
+            // 
+            this.btnTrack.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.btnTrack.Location = new System.Drawing.Point(246, 120);
+            this.btnTrack.Name = "btnTrack";
+            this.btnTrack.Size = new System.Drawing.Size(100, 28);
+            this.btnTrack.TabIndex = 2;
+            this.btnTrack.Text = "Start";
+            this.btnTrack.UseVisualStyleBackColor = true;
+            this.btnTrack.Click += new System.EventHandler(this.BtnTrack_Click);
+            // 
+            // lblUserValue
+            // 
+            this.lblUserValue.AutoSize = true;
+            this.lblUserValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.lblUserValue.Location = new System.Drawing.Point(56, 10);
+            this.lblUserValue.Name = "lblUserValue";
+            this.lblUserValue.Size = new System.Drawing.Size(72, 20);
+            this.lblUserValue.TabIndex = 1;
+            this.lblUserValue.Text = "loading...";
+            // 
+            // lblUser
+            // 
+            this.lblUser.AutoSize = true;
+            this.lblUser.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.lblUser.Location = new System.Drawing.Point(12, 10);
+            this.lblUser.Name = "lblUser";
+            this.lblUser.Size = new System.Drawing.Size(51, 20);
+            this.lblUser.TabIndex = 0;
+            this.lblUser.Text = "User: ";
+            // 
+            // linkLabelLogin
+            // 
+            this.linkLabelLogin.AutoSize = true;
+            this.linkLabelLogin.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.linkLabelLogin.Location = new System.Drawing.Point(185, 74);
+            this.linkLabelLogin.Name = "linkLabelLogin";
+            this.linkLabelLogin.Size = new System.Drawing.Size(55, 25);
+            this.linkLabelLogin.TabIndex = 3;
+            this.linkLabelLogin.TabStop = true;
+            this.linkLabelLogin.Text = "here";
+            this.linkLabelLogin.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabelLogin_LinkClicked);
+            // 
+            // labelLogin
+            // 
+            this.labelLogin.AutoSize = true;
+            this.labelLogin.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.labelLogin.Location = new System.Drawing.Point(133, 74);
+            this.labelLogin.Name = "labelLogin";
+            this.labelLogin.Size = new System.Drawing.Size(184, 25);
+            this.labelLogin.TabIndex = 4;
+            this.labelLogin.Text = "Click here to login";
+            // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -130,14 +207,14 @@
             this.menuItemLogin.Name = "menuItemLogin";
             this.menuItemLogin.Size = new System.Drawing.Size(112, 22);
             this.menuItemLogin.Text = "Login";
-            this.menuItemLogin.Click += new System.EventHandler(this.menuItemLogin_Click);
+            this.menuItemLogin.Click += new System.EventHandler(this.MenuItemLogin_Click);
             // 
             // menuItemLogout
             // 
             this.menuItemLogout.Name = "menuItemLogout";
             this.menuItemLogout.Size = new System.Drawing.Size(112, 22);
             this.menuItemLogout.Text = "Logout";
-            this.menuItemLogout.Click += new System.EventHandler(this.menuItemLogout_Click);
+            this.menuItemLogout.Click += new System.EventHandler(this.MenuItemLogout_Click);
             // 
             // toolStripSeparator1
             // 
@@ -149,69 +226,7 @@
             this.menuItemExit.Name = "menuItemExit";
             this.menuItemExit.Size = new System.Drawing.Size(112, 22);
             this.menuItemExit.Text = "Exit";
-            this.menuItemExit.Click += new System.EventHandler(this.menuItemExit_Click);
-            // 
-            // linkLabelLogin
-            // 
-            this.linkLabelLogin.AutoSize = true;
-            this.linkLabelLogin.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.linkLabelLogin.Location = new System.Drawing.Point(185, 74);
-            this.linkLabelLogin.Name = "linkLabelLogin";
-            this.linkLabelLogin.Size = new System.Drawing.Size(55, 25);
-            this.linkLabelLogin.TabIndex = 3;
-            this.linkLabelLogin.TabStop = true;
-            this.linkLabelLogin.Text = "here";
-            this.linkLabelLogin.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
-            // 
-            // labelLogin
-            // 
-            this.labelLogin.AutoSize = true;
-            this.labelLogin.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.labelLogin.Location = new System.Drawing.Point(133, 74);
-            this.labelLogin.Name = "labelLogin";
-            this.labelLogin.Size = new System.Drawing.Size(184, 25);
-            this.labelLogin.TabIndex = 4;
-            this.labelLogin.Text = "Click here to login";
-            // 
-            // panelInfo
-            // 
-            this.panelInfo.Controls.Add(this.btnTrack);
-            this.panelInfo.Controls.Add(this.lblUserValue);
-            this.panelInfo.Controls.Add(this.lblUser);
-            this.panelInfo.Location = new System.Drawing.Point(3, 27);
-            this.panelInfo.Name = "panelInfo";
-            this.panelInfo.Size = new System.Drawing.Size(463, 160);
-            this.panelInfo.TabIndex = 5;
-            // 
-            // lblUser
-            // 
-            this.lblUser.AutoSize = true;
-            this.lblUser.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.lblUser.Location = new System.Drawing.Point(12, 10);
-            this.lblUser.Name = "lblUser";
-            this.lblUser.Size = new System.Drawing.Size(51, 20);
-            this.lblUser.TabIndex = 0;
-            this.lblUser.Text = "User: ";
-            // 
-            // lblUserValue
-            // 
-            this.lblUserValue.AutoSize = true;
-            this.lblUserValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.lblUserValue.Location = new System.Drawing.Point(56, 10);
-            this.lblUserValue.Name = "lblUserValue";
-            this.lblUserValue.Size = new System.Drawing.Size(72, 20);
-            this.lblUserValue.TabIndex = 1;
-            this.lblUserValue.Text = "loading...";
-            // 
-            // btnTrack
-            // 
-            this.btnTrack.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.btnTrack.Location = new System.Drawing.Point(349, 120);
-            this.btnTrack.Name = "btnTrack";
-            this.btnTrack.Size = new System.Drawing.Size(100, 28);
-            this.btnTrack.TabIndex = 2;
-            this.btnTrack.Text = "Start";
-            this.btnTrack.UseVisualStyleBackColor = true;
+            this.menuItemExit.Click += new System.EventHandler(this.MenuItemExit_Click);
             // 
             // Main
             // 
@@ -227,10 +242,10 @@
             this.systemTrayIconContextMenu.ResumeLayout(false);
             this.mainPanel.ResumeLayout(false);
             this.mainPanel.PerformLayout();
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
             this.panelInfo.ResumeLayout(false);
             this.panelInfo.PerformLayout();
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -255,6 +270,7 @@
         private System.Windows.Forms.Label lblUser;
         private System.Windows.Forms.Label lblUserValue;
         private System.Windows.Forms.Button btnTrack;
+        private System.Windows.Forms.Button btnStop;
     }
 }
 

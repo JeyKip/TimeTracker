@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TimeTracker.Services;
 using TimeTracker.Services.SignIn;
 using TimeTracker.WebView;
 
@@ -21,18 +22,20 @@ namespace TimeTracker
         #region Fields and properties
 
         private readonly SignInService _signInService;
+        private readonly ITaskRunner _taskRunner;
         private readonly ILogger<Main> _logger;
 
         #endregion
 
         #region Constructors
 
-        public Main(ILogger<Main> logger, SignInService signInService)
+        public Main(ILogger<Main> logger, SignInService signInService, ITaskRunner taskRunner)
         {
             InitializeComponent();
 
             _logger = logger;
             _signInService = signInService;
+            _taskRunner = taskRunner;
         }
 
         #endregion
@@ -78,7 +81,7 @@ namespace TimeTracker
         private void SystemTrayMenuClose_Click(object sender, EventArgs e)
         {
             // when user clicked "Exit" button from system tray we need to shutdown application
-            Application.Exit();
+            Exit();
         }
 
         private void SystemTrayMenuOpen_Click(object sender, EventArgs e)
@@ -87,9 +90,8 @@ namespace TimeTracker
             OpenFromTray();
         }
 
-        private async void menuItemLogin_Click(object sender, EventArgs e)
+        private async void MenuItemLogin_Click(object sender, EventArgs e)
         {
-            _logger.LogDebug("test");
             try
             {
                 var result = await _signInService.SignInAsync();
@@ -98,7 +100,8 @@ namespace TimeTracker
                     MessageBox.Show(this, result.Error, "Login", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     UserAuthorized(false);
                 }
-                else {
+                else
+                {
                     UserAuthorized(true);
                 }
             }
@@ -111,7 +114,7 @@ namespace TimeTracker
             RefreshMenuItems();
         }
 
-        private async void menuItemLogout_Click(object sender, EventArgs e)
+        private async void MenuItemLogout_Click(object sender, EventArgs e)
         {
             try
             {
@@ -123,6 +126,46 @@ namespace TimeTracker
                 _logger.LogError(ex.ToString());
             }
             RefreshMenuItems();
+        }
+
+        private void MenuItemExit_Click(object sender, EventArgs e)
+        {
+            Exit();
+        }
+
+        private void LinkLabelLogin_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            MenuItemLogin_Click(sender, e);
+        }
+
+        private async void BtnTrack_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                await _taskRunner.Start();
+
+                ToggleTaskRunnerButtons(true);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message, "Start Tracking", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _logger.LogError(ex, "Error occurred during starting task runner.");
+            }
+        }
+
+        private async void BtnStop_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                await _taskRunner.Stop();
+
+                ToggleTaskRunnerButtons(false);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message, "Stop Tracking", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _logger.LogError(ex, "Error occurred during stopping task runner.");
+            }
         }
 
         #endregion
@@ -145,7 +188,8 @@ namespace TimeTracker
             systemTrayIcon.Visible = false;
         }
 
-        private void RefreshMenuItems() {
+        private void RefreshMenuItems()
+        {
             menuItemLogin.Enabled = !_signInService.IsAuthorized;
             menuItemLogout.Enabled = _signInService.IsAuthorized;
             panelInfo.Visible = _signInService.IsAuthorized;
@@ -157,21 +201,23 @@ namespace TimeTracker
             {
                 lblUserValue.Text = _signInService.UserDisplayName;
             }
-            else {
+            else
+            {
                 lblUserValue.Text = string.Empty;
             }
         }
 
-        #endregion
+        private void ToggleTaskRunnerButtons(bool started)
+        {
+            btnStop.Enabled = started;
+            btnTrack.Enabled = !started;
+        }
 
-        private void menuItemExit_Click(object sender, EventArgs e)
+        private void Exit()
         {
             Application.Exit();
         }
 
-        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            menuItemLogin_Click(sender, new EventArgs());
-        }
+        #endregion
     }
 }

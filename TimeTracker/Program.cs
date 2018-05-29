@@ -6,7 +6,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TimeTracker.Services;
 using TimeTracker.Services.SignIn;
+using TimeTracker.Services.Storage;
+using TimeTracker.Services.Tracking;
 
 namespace TimeTracker
 {
@@ -43,6 +46,11 @@ namespace TimeTracker
                 })
                 .AddTransient<Main>()
                 .AddTransient<SignInService>()
+                .AddTransient<ITaskRunner, TaskRunner>()
+                .AddTransient<ITrackApplicationsStorageService, TrackStorageService>()
+                .AddTransient<ITrackHooksStorageService, TrackStorageService>()
+                .AddTransient<ITrackApplicationsService, TrackApplicationsService>()
+                .AddTransient<ITrackHooksService, TrackHooksService>()
                 .BuildServiceProvider();
         }
     }

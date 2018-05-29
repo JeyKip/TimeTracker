@@ -227,8 +227,16 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\Storage\Entities\TrackApplication.cs" />
+    <Compile Include="Services\Storage\Entities\MouseClick.cs" />
+    <Compile Include="Services\Storage\ITrackApplicationsStorageService.cs" />
+    <Compile Include="Services\Storage\ITrackHooksStorageService.cs" />
+    <Compile Include="Services\Storage\TrackStorageService.cs" />
+    <Compile Include="Services\Tracking\TrackApplicationsService.cs" />
     <Compile Include="Services\SignIn\SignInResult.cs" />
     <Compile Include="Services\SignIn\SignInService.cs" />
+    <Compile Include="Services\TaskRunner.cs" />
+    <Compile Include="Services\Tracking\TrackHooksService.cs" />
     <Compile Include="WebView\ExtendedWebBrowser.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -290,5 +298,6 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
