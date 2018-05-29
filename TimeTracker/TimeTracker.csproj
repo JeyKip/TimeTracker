@@ -206,6 +206,8 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\SignIn\SignInResult.cs" />
+    <Compile Include="Services\SignIn\SignInService.cs" />
     <Compile Include="WebView\ExtendedWebBrowser.cs">
       <SubType>Component</SubType>
     </Compile>

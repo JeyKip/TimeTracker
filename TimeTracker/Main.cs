@@ -9,37 +9,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TimeTracker.Services.SignIn;
 using TimeTracker.WebView;
 
 namespace TimeTracker
 {
     public partial class Main : Form
     {
-        #region Fields and Properties
-
-        private OidcClient _oidcClient;
-        private string _accessTokenDisplay;
-        private string _refreshToken;
-
-        #endregion
-
+        private readonly SignInService _signInService;
         #region Constructors
 
         public Main()
         {
             InitializeComponent();
 
-            var options = new OidcClientOptions
-            {
-                Authority = "https://demo.identityserver.io",
-                ClientId = "native.hybrid",
-                Scope = "openid email api offline_access",
-                RedirectUri = "http://localhost/winforms.client",
-
-                Browser = new WinFormsEmbeddedBrowser()
-            };
-
-            _oidcClient = new OidcClient(options);
+            _signInService = new SignInService();
         }
 
         #endregion
@@ -93,6 +77,36 @@ namespace TimeTracker
             OpenFromTray();
         }
 
+        private async void menuItemLogin_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var result = await _signInService.SignInAsync();
+                if (result.IsError)
+                {
+                    MessageBox.Show(this, result.Error, "Login", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message, "Login", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Logger.Error(ex);
+            }
+        }
+
+        private async void menuItemLogout_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                await _signInService.SignOutAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message, "Logout", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Logger.Error(ex);
+            }
+        }
+
         #endregion
 
         #region Private Methods
@@ -115,46 +129,9 @@ namespace TimeTracker
 
         #endregion
 
-        private void panel1_Paint(object sender, PaintEventArgs e)
+        private void menuItemExit_Click(object sender, EventArgs e)
         {
-
-        }
-
-        private async void btnLogin_Click(object sender, EventArgs e)
-        {
-            var result = await _oidcClient.LoginAsync(new LoginRequest { BrowserDisplayMode = DisplayMode.Visible });
-
-            if (result.IsError)
-            {
-                MessageBox.Show(this, result.Error, "Login", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            else
-            {
-                _accessTokenDisplay = result.AccessToken;
-
-                var sb = new StringBuilder(128);
-                foreach (var claim in result.User.Claims)
-                {
-                    sb.AppendLine($"{claim.Type}: {claim.Value}");
-                }
-
-                if (!string.IsNullOrWhiteSpace(result.RefreshToken))
-                {
-                    sb.AppendLine($"refresh token: {result.RefreshToken}");
-                    _refreshToken = result.RefreshToken;
-                }
-
-                System.Diagnostics.Debug.WriteLine(sb.ToString());
-
-                //_apiClient = new HttpClient(result.RefreshTokenHandler);
-                //_apiClient.BaseAddress = new Uri("https://demo.identityserver.io/api/");
-            }
-        }
-
-        private async void btnLogout_Click(object sender, EventArgs e)
-        {
-            await _oidcClient.LogoutAsync();
-            _accessTokenDisplay = string.Empty;
+            Application.Exit();
         }
     }
 }
