@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using TimeTracker.Services;
 using TimeTracker.Services.SignIn;
 using TimeTracker.Services.Storage;
+using TimeTracker.Services.Sync;
 using TimeTracker.Services.Tracking;
 
 namespace TimeTracker
@@ -51,6 +52,8 @@ namespace TimeTracker
                 .AddTransient<ITrackHooksStorageService, TrackStorageService>()
                 .AddTransient<ITrackApplicationsService, TrackApplicationsService>()
                 .AddTransient<ITrackHooksService, TrackHooksService>()
+                .AddSingleton<ISyncService, SyncService>()
+                .AddTransient<ITrackApiWrapper, ApiStubWrapper>()
                 .BuildServiceProvider();
         }
     }

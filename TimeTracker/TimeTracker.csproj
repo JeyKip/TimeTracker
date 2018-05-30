@@ -219,6 +219,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\ResultBase.cs" />
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -231,7 +232,16 @@
     <Compile Include="Services\Storage\Entities\MouseClick.cs" />
     <Compile Include="Services\Storage\ITrackApplicationsStorageService.cs" />
     <Compile Include="Services\Storage\ITrackHooksStorageService.cs" />
+    <Compile Include="Services\Storage\Entities\MouseClicksSnapshot.cs" />
+    <Compile Include="Services\Storage\Entities\KeyboardClicksSnapshot.cs" />
     <Compile Include="Services\Storage\TrackStorageService.cs" />
+    <Compile Include="Services\Sync\ApiStub.cs" />
+    <Compile Include="Services\Sync\ISyncService.cs" />
+    <Compile Include="Services\Sync\ITrackApiWrapper.cs" />
+    <Compile Include="Services\Sync\PushUpdatesRequest.cs" />
+    <Compile Include="Services\Sync\PushUpdatesResult.cs" />
+    <Compile Include="Services\Sync\SendAsyncResult.cs" />
+    <Compile Include="Services\Sync\SyncService.cs" />
     <Compile Include="Services\Tracking\TrackApplicationsService.cs" />
     <Compile Include="Services\SignIn\SignInResult.cs" />
     <Compile Include="Services\SignIn\SignInService.cs" />

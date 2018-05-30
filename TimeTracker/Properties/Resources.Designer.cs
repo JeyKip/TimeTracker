@@ -61,6 +61,15 @@ namespace TimeTracker.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An error occured while saving data to file.
+        /// </summary>
+        internal static string APIStubErrorMessage {
+            get {
+                return ResourceManager.GetString("APIStubErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to email.
         /// </summary>
         internal static string DisplayNameClaimType {

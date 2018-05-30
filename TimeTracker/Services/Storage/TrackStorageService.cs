@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TimeTracker.Common;
 
 namespace TimeTracker.Services.Storage
 {
@@ -30,6 +31,21 @@ namespace TimeTracker.Services.Storage
         }
 
         public Task SaveMouseClick(MouseClick click)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ResultBase> ClearHooksAsync(DateTime EndDate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<MouseClicksSnapshot> GetMouseClicksAsync(DateTime? dtStart, DateTime dtEnd)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<KeyboardClicksSnapshot> GetKeyboardClicksAsync(DateTime? dtStart, DateTime dtEnd)
         {
             throw new NotImplementedException();
         }
