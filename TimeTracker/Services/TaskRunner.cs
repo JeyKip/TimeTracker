@@ -1,9 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using TimeTracker.Common;
 using TimeTracker.Services.Sync;
 using TimeTracker.Services.Tracking;
 
@@ -11,19 +14,21 @@ namespace TimeTracker.Services
 {
     public interface ITaskRunner
     {
-        Task Start();
-        Task Stop();
+        void Start();
+        void Stop();
     }
 
     public class TaskRunner : ITaskRunner
     {
         #region Fields and properties
 
+        private CancellationTokenSource _cancelTokenSource;
+        private CancellationToken _cancellationToken;
+
         private readonly ITrackApplicationsService _trackApplicationsService;
         private readonly ITrackHooksService _trackHooksService;
         private readonly ISyncService _syncService;
         private readonly ILogger<TaskRunner> _logger;
-        private Task<PushUpdatesResult> _pushTask;
 
         #endregion
 
@@ -41,40 +46,68 @@ namespace TimeTracker.Services
 
         #region ITaskRunner
 
-        public Task Start()
+        public void Start()
         {
-            //StartPushUpdates2API();
-            return Task.FromResult(1);
+            _cancelTokenSource = new CancellationTokenSource();
+            _cancellationToken = _cancelTokenSource.Token;
+
+            ScheduleTask(async () => await _syncService.PushUpdatesAsync(null, null), 1000);
         }
 
-        public Task Stop()
+        public void Stop()
         {
-            //if (!_pushTask.IsCanceled)
-            //    _pushTask.Dispose();
-            return Task.FromResult(0);
+            _cancelTokenSource.Cancel();
+            _cancelTokenSource.Dispose();
         }
 
         #endregion
 
         #region Schedule methods
 
-        private void StartPushUpdates2API() {
-            var startDate = (DateTime?)null;
-            var defaultSleepTimeMs = 30000; //todo: get from config
+        private void ScheduleTask(Func<Task<ResultBase>> action, int interval)
+        {
+            if (action == null)
+                throw new ArgumentNullException(nameof(action));
+
+            if (interval <= 0)
+                throw new ArgumentException("Interval must be a positive number", nameof(interval));
+
+            var defaultSleepTimeMs = interval;
             var sleepTimeMs = defaultSleepTimeMs;
-            do {
-                _pushTask = _syncService.PushUpdatesAsync(startDate, null);
-                var result = _pushTask.GetAwaiter().GetResult();
-                if (result.Status)
+
+            Task.Run(async () =>
+            {
+                var sw = new Stopwatch();
+
+                do
                 {
-                    startDate = result.DataPushedUntil;
-                    sleepTimeMs = defaultSleepTimeMs;
+                    sw.Start();
+
+                    try
+                    {
+                        var result = await action();
+                        if (result.Status)
+                            sleepTimeMs = defaultSleepTimeMs;
+                        else
+                            throw new Exception(result.ErrorMessage);
+                    }
+                    catch (Exception ex)
+                    {
+                        sleepTimeMs *= 2;
+                        _logger.LogError($"Error occurred during background method execution.", ex);
+                    }
+
+                    sw.Stop();
+
+                    var elapsed = sw.ElapsedMilliseconds;
+                    var sleepTime = (int)Math.Max(0, sleepTimeMs - elapsed);
+
+                    sw.Reset();
+
+                    Thread.Sleep(sleepTime);
                 }
-                else {
-                    sleepTimeMs *= 2; // increase intervals to avoid spamming API if it is unavailable or there is an error
-                }
-                System.Threading.Thread.Sleep(sleepTimeMs);
-            } while (true);
+                while (!_cancellationToken.IsCancellationRequested);
+            }, _cancellationToken);
         }
 
         #endregion

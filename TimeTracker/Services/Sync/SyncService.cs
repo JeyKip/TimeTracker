@@ -36,7 +36,8 @@ namespace TimeTracker.Services.Sync
         {
             var dtStart = startDate;
             var dtEnd = endDate ?? DateTime.UtcNow; //todo: remove endDate param
-            PushUpdatesResult result = new PushUpdatesResult {
+            var result = new PushUpdatesResult
+            {
                 Status = true,
             };
 
@@ -59,7 +60,7 @@ namespace TimeTracker.Services.Sync
 
             result.DataPushedFrom = dtStart;
             result.DataPushedUntil = dtEnd;
-            
+
             // clear items which were already posted to API
             var clearResult = await _trackHooksStorageService.ClearHooksAsync(dtEnd);
             if (!clearResult.Status)

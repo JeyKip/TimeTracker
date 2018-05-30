@@ -21,7 +21,8 @@ namespace TimeTracker.Services.Sync
 
         public async Task<SendAsyncResult> SendAsync(PushUpdatesRequest request)
         {
-            return await Task.Run(() => {
+            return await Task.Run(() =>
+            {
                 var result = new SendAsyncResult
                 {
                     Status = true

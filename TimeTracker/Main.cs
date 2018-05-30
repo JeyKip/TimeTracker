@@ -138,11 +138,11 @@ namespace TimeTracker
             MenuItemLogin_Click(sender, e);
         }
 
-        private async void BtnTrack_Click(object sender, EventArgs e)
+        private void BtnTrack_Click(object sender, EventArgs e)
         {
             try
             {
-                await _taskRunner.Start();
+                _taskRunner.Start();
 
                 ToggleTaskRunnerButtons(true);
             }
@@ -153,11 +153,11 @@ namespace TimeTracker
             }
         }
 
-        private async void BtnStop_Click(object sender, EventArgs e)
+        private void BtnStop_Click(object sender, EventArgs e)
         {
             try
             {
-                await _taskRunner.Stop();
+                _taskRunner.Stop();
 
                 ToggleTaskRunnerButtons(false);
             }
