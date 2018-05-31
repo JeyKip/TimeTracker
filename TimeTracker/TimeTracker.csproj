@@ -229,7 +229,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Models\KeystrokeModel.cs" />
-    <Compile Include="Services\Storage\Entities\TrackApplication.cs" />
     <Compile Include="Services\Models\MouseClickModel.cs" />
     <Compile Include="Services\Storage\Entities\MouseClicksSnapshot.cs" />
     <Compile Include="Services\Storage\Entities\KeyboardClicksSnapshot.cs" />
