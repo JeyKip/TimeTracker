@@ -30,6 +30,7 @@ namespace TimeTracker.Services
 
         private readonly ITrackApplicationsService _trackApplicationsService;
         private readonly ITrackKeystrokeService _trackKeystrokeService;
+        private readonly ITrackMouseClickService _trackMouseClickService;
         private readonly ISyncService _syncService;
         private readonly KeystrokeAPI _keystrokeAPI;
         private readonly ILogger<TaskRunner> _logger;
@@ -38,10 +39,11 @@ namespace TimeTracker.Services
 
         #region Constructors
 
-        public TaskRunner(ITrackApplicationsService trackApplicationsService, ITrackKeystrokeService trackKeystrokeService, ISyncService syncService, KeystrokeAPI keystrokeAPI, ILogger<TaskRunner> logger)
+        public TaskRunner(ITrackApplicationsService trackApplicationsService, ITrackKeystrokeService trackKeystrokeService, ITrackMouseClickService trackMouseClickService, ISyncService syncService, KeystrokeAPI keystrokeAPI, ILogger<TaskRunner> logger)
         {
             _trackApplicationsService = trackApplicationsService ?? throw new ArgumentNullException(nameof(trackApplicationsService));
             _trackKeystrokeService = trackKeystrokeService ?? throw new ArgumentNullException(nameof(trackKeystrokeService));
+            _trackMouseClickService = trackMouseClickService ?? throw new ArgumentNullException(nameof(trackMouseClickService));
             _syncService = syncService ?? throw new ArgumentNullException(nameof(syncService));
             _keystrokeAPI = keystrokeAPI ?? throw new ArgumentNullException(nameof(keystrokeAPI));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -58,6 +60,7 @@ namespace TimeTracker.Services
 
             ScheduleRecurringTask(async () => await _syncService.PushUpdatesAsync(null, null), 1000);
             ScheduleKeystrokeTask();
+            ScheduleMouseClickTask();
         }
 
         public void Stop()
@@ -65,6 +68,7 @@ namespace TimeTracker.Services
             _cancelTokenSource.Cancel();
             _cancelTokenSource.Dispose();
             _keystrokeAPI.RemoveKeyboardHook();
+            _keystrokeAPI.RemoveMouseHook();
         }
 
         #endregion
@@ -124,6 +128,19 @@ namespace TimeTracker.Services
                 _trackKeystrokeService.TrackHook(new KeystrokeModel
                 {
                     KeyCode = (int)key.KeyCode
+                });
+            });
+        }
+
+        private void ScheduleMouseClickTask()
+        {
+            _keystrokeAPI.CreateMouseHook((mouse) =>
+            {
+                _trackMouseClickService.TrackHook(new MouseClickModel
+                {
+                    Button = mouse.ButtonCode,
+                    X = mouse.X,
+                    Y = mouse.Y
                 });
             });
         }

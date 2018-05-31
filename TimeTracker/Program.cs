@@ -52,6 +52,7 @@ namespace TimeTracker
                 .AddTransient<ITaskRunner, TaskRunner>()
                 .AddTransient<ITrackApplicationsService, TrackApplicationsService>()
                 .AddTransient<ITrackKeystrokeService, TrackKeystrokeService>()
+                .AddTransient<ITrackMouseClickService, TrackMouseClickService>()
                 .AddSingleton<ISyncService, SyncService>()
                 .AddSingleton<KeystrokeAPI>()
                 .AddTransient<ITrackApiWrapper, ApiStubWrapper>()

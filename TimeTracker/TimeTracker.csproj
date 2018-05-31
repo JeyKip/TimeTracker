@@ -240,6 +240,7 @@
     <Compile Include="Services\Sync\SendAsyncResult.cs" />
     <Compile Include="Services\Sync\SyncService.cs" />
     <Compile Include="Services\Tracking\Hooks\ITrackHooksService.cs" />
+    <Compile Include="Services\Tracking\Hooks\TrackMouseClickService.cs" />
     <Compile Include="Services\Tracking\TrackApplicationsService.cs" />
     <Compile Include="Services\SignIn\SignInResult.cs" />
     <Compile Include="Services\SignIn\SignInService.cs" />

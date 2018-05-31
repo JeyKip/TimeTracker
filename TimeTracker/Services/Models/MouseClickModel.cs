@@ -1,11 +1,10 @@
-﻿using System.Windows.Forms;
+﻿using Keystroke.API;
 
 namespace TimeTracker.Services.Models
 {
     public class MouseClickModel
     {
-        public MouseButtons Button { get; set; }
-        public int Clicks { get; set; }
+        public MouseButtonCode Button { get; set; }
         public int X { get; set; }
         public int Y { get; set; }
     }
