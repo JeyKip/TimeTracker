@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Keystroke.API;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using System;
@@ -11,6 +12,7 @@ using TimeTracker.Services.SignIn;
 using TimeTracker.Services.Storage;
 using TimeTracker.Services.Sync;
 using TimeTracker.Services.Tracking;
+using TimeTracker.Services.Tracking.Hooks;
 
 namespace TimeTracker
 {
@@ -48,11 +50,10 @@ namespace TimeTracker
                 .AddTransient<Main>()
                 .AddTransient<SignInService>()
                 .AddTransient<ITaskRunner, TaskRunner>()
-                .AddTransient<ITrackApplicationsStorageService, TrackStorageService>()
-                .AddTransient<ITrackHooksStorageService, TrackStorageService>()
                 .AddTransient<ITrackApplicationsService, TrackApplicationsService>()
-                .AddTransient<ITrackHooksService, TrackHooksService>()
+                .AddTransient<ITrackKeystrokeService, TrackKeystrokeService>()
                 .AddSingleton<ISyncService, SyncService>()
+                .AddSingleton<KeystrokeAPI>()
                 .AddTransient<ITrackApiWrapper, ApiStubWrapper>()
                 .BuildServiceProvider();
         }

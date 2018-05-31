@@ -18,17 +18,15 @@ namespace TimeTracker.Services.Tracking
     {
         #region Fields and properties
 
-        private readonly ITrackApplicationsStorageService _storageService;
         private readonly ILogger<TrackApplicationsService> _logger;
 
         #endregion
 
         #region Constructors
 
-        public TrackApplicationsService(ITrackApplicationsStorageService storageService, ILogger<TrackApplicationsService> logger)
+        public TrackApplicationsService(ILogger<TrackApplicationsService> logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _storageService = storageService ?? throw new ArgumentNullException(nameof(storageService));
         }
 
         #endregion

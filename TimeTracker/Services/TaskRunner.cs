@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Keystroke.API;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -7,8 +8,10 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using TimeTracker.Common;
+using TimeTracker.Services.Models;
 using TimeTracker.Services.Sync;
 using TimeTracker.Services.Tracking;
+using TimeTracker.Services.Tracking.Hooks;
 
 namespace TimeTracker.Services
 {
@@ -26,19 +29,21 @@ namespace TimeTracker.Services
         private CancellationToken _cancellationToken;
 
         private readonly ITrackApplicationsService _trackApplicationsService;
-        private readonly ITrackHooksService _trackHooksService;
+        private readonly ITrackKeystrokeService _trackKeystrokeService;
         private readonly ISyncService _syncService;
+        private readonly KeystrokeAPI _keystrokeAPI;
         private readonly ILogger<TaskRunner> _logger;
 
         #endregion
 
         #region Constructors
 
-        public TaskRunner(ITrackApplicationsService trackApplicationsService, ITrackHooksService trackHooksService, ISyncService syncService, ILogger<TaskRunner> logger)
+        public TaskRunner(ITrackApplicationsService trackApplicationsService, ITrackKeystrokeService trackKeystrokeService, ISyncService syncService, KeystrokeAPI keystrokeAPI, ILogger<TaskRunner> logger)
         {
             _trackApplicationsService = trackApplicationsService ?? throw new ArgumentNullException(nameof(trackApplicationsService));
-            _trackHooksService = trackHooksService ?? throw new ArgumentNullException(nameof(trackHooksService));
+            _trackKeystrokeService = trackKeystrokeService ?? throw new ArgumentNullException(nameof(trackKeystrokeService));
             _syncService = syncService ?? throw new ArgumentNullException(nameof(syncService));
+            _keystrokeAPI = keystrokeAPI ?? throw new ArgumentNullException(nameof(keystrokeAPI));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -51,20 +56,22 @@ namespace TimeTracker.Services
             _cancelTokenSource = new CancellationTokenSource();
             _cancellationToken = _cancelTokenSource.Token;
 
-            ScheduleTask(async () => await _syncService.PushUpdatesAsync(null, null), 1000);
+            ScheduleRecurringTask(async () => await _syncService.PushUpdatesAsync(null, null), 1000);
+            ScheduleKeystrokeTask();
         }
 
         public void Stop()
         {
             _cancelTokenSource.Cancel();
             _cancelTokenSource.Dispose();
+            _keystrokeAPI.RemoveKeyboardHook();
         }
 
         #endregion
 
         #region Schedule methods
 
-        private void ScheduleTask(Func<Task<ResultBase>> action, int interval)
+        private void ScheduleRecurringTask(Func<Task<ResultBase>> action, int interval)
         {
             if (action == null)
                 throw new ArgumentNullException(nameof(action));
@@ -108,6 +115,17 @@ namespace TimeTracker.Services
                 }
                 while (!_cancellationToken.IsCancellationRequested);
             }, _cancellationToken);
+        }
+
+        private void ScheduleKeystrokeTask()
+        {
+            _keystrokeAPI.CreateKeyboardHook((key) =>
+            {
+                _trackKeystrokeService.TrackHook(new KeystrokeModel
+                {
+                    KeyCode = (int)key.KeyCode
+                });
+            });
         }
 
         #endregion

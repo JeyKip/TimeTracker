@@ -12,15 +12,11 @@ namespace TimeTracker.Services.Sync
     /// </summary>
     public class SyncService : ISyncService
     {
-        private readonly ITrackHooksStorageService _trackHooksStorageService;
-        private readonly ITrackApplicationsStorageService _trackApplicationsStorageService;
         private readonly ITrackApiWrapper _trackApiWrapper;
         private object _lockObject = new object();
 
-        public SyncService(ITrackApplicationsStorageService trackApplicationsStorageService, ITrackHooksStorageService trackHooksStorageService, ITrackApiWrapper trackApiWrapper)
+        public SyncService(ITrackApiWrapper trackApiWrapper)
         {
-            _trackHooksStorageService = trackHooksStorageService;
-            _trackApplicationsStorageService = trackApplicationsStorageService;
             _trackApiWrapper = trackApiWrapper;
         }
 
@@ -44,8 +40,8 @@ namespace TimeTracker.Services.Sync
             // gather data from services
             var request = new PushUpdatesRequest
             {
-                MouseClicks = await _trackHooksStorageService.GetMouseClicksAsync(dtStart, dtEnd),
-                KeyboardClicks = await _trackHooksStorageService.GetKeyboardClicksAsync(dtStart, dtEnd)
+                MouseClicks = null,
+                KeyboardClicks = null
             };
 
             // push request object to API
@@ -62,8 +58,8 @@ namespace TimeTracker.Services.Sync
             result.DataPushedUntil = dtEnd;
 
             // clear items which were already posted to API
-            var clearResult = await _trackHooksStorageService.ClearHooksAsync(dtEnd);
-            if (!clearResult.Status)
+            //var clearResult = await _trackHooksStorageService.ClearHooksAsync(dtEnd);
+            //if (!clearResult.Status)
             {
                 // do nothing, data will be cleared in next iteration
                 // while pushing of updates will not get already synced objects

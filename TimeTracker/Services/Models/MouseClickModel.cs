@@ -1,8 +1,8 @@
 ﻿using System.Windows.Forms;
 
-namespace TimeTracker.Services.Storage
+namespace TimeTracker.Services.Models
 {
-    public class MouseClick
+    public class MouseClickModel
     {
         public MouseButtons Button { get; set; }
         public int Clicks { get; set; }

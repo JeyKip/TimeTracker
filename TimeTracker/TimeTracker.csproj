@@ -228,13 +228,11 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\Models\KeystrokeModel.cs" />
     <Compile Include="Services\Storage\Entities\TrackApplication.cs" />
-    <Compile Include="Services\Storage\Entities\MouseClick.cs" />
-    <Compile Include="Services\Storage\ITrackApplicationsStorageService.cs" />
-    <Compile Include="Services\Storage\ITrackHooksStorageService.cs" />
+    <Compile Include="Services\Models\MouseClickModel.cs" />
     <Compile Include="Services\Storage\Entities\MouseClicksSnapshot.cs" />
     <Compile Include="Services\Storage\Entities\KeyboardClicksSnapshot.cs" />
-    <Compile Include="Services\Storage\TrackStorageService.cs" />
     <Compile Include="Services\Sync\ApiStub.cs" />
     <Compile Include="Services\Sync\ISyncService.cs" />
     <Compile Include="Services\Sync\ITrackApiWrapper.cs" />
@@ -242,11 +240,12 @@
     <Compile Include="Services\Sync\PushUpdatesResult.cs" />
     <Compile Include="Services\Sync\SendAsyncResult.cs" />
     <Compile Include="Services\Sync\SyncService.cs" />
+    <Compile Include="Services\Tracking\Hooks\ITrackHooksService.cs" />
     <Compile Include="Services\Tracking\TrackApplicationsService.cs" />
     <Compile Include="Services\SignIn\SignInResult.cs" />
     <Compile Include="Services\SignIn\SignInService.cs" />
     <Compile Include="Services\TaskRunner.cs" />
-    <Compile Include="Services\Tracking\TrackHooksService.cs" />
+    <Compile Include="Services\Tracking\Hooks\TrackKeystrokeService.cs" />
     <Compile Include="WebView\ExtendedWebBrowser.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -308,6 +307,11 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Keystroke.API\Keystroke.API.csproj">
+      <Project>{f6fec17e-e22d-4149-a8a8-9f64c3c905d3}</Project>
+      <Name>Keystroke.API</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
