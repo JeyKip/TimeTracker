@@ -1,4 +1,8 @@
-﻿namespace TimeTracker.Services.Tracking
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace TimeTracker.Services.Tracking
 {
     public interface ITakeSnapshot<TSnapshotModel>
         where TSnapshotModel: class
@@ -8,5 +12,6 @@
         /// </summary>
         /// <returns>An instance </returns>
         TSnapshotModel TakeSnapshot();
+        bool ClearSnapshot(IEnumerable<Guid> mouseIdList);
     }
 }

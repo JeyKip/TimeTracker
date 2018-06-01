@@ -33,10 +33,8 @@ namespace TimeTracker.Services.Sync
         /// <param name="startDate">Starting timestamp to filter data that already has been sent to API but not cleared yet.</param>
         /// <param name="endDate">???</param>
         /// <returns></returns>
-        public async Task<PushUpdatesResult> PushUpdatesAsync(DateTime? startDate, DateTime? endDate)
+        public async Task<PushUpdatesResult> PushUpdatesAsync()
         {
-            var dtStart = startDate;
-            var dtEnd = endDate ?? DateTime.UtcNow; //todo: remove endDate param
             var result = new PushUpdatesResult
             {
                 Status = true,
@@ -59,16 +57,13 @@ namespace TimeTracker.Services.Sync
                 return result;
             }
 
-            result.DataPushedFrom = dtStart;
-            result.DataPushedUntil = dtEnd;
-
+            // gather ids of handles snapshot items
+            result.MouseIdList = request.MouseClicks.Items.Select(t=>t.Id);
+            result.KeyboardIdList = request.KeyboardClicks.Items.Select(t => t.Id);
+            
             // clear items which were already posted to API
-            //var clearResult = await _trackHooksStorageService.ClearHooksAsync(dtEnd);
-            //if (!clearResult.Status)
-            {
-                // do nothing, data will be cleared in next iteration
-                // while pushing of updates will not get already synced objects
-            }
+            _mouseSnapshot.ClearSnapshot(result.MouseIdList);
+            _keyboardSnapshot.ClearSnapshot(result.KeyboardIdList);
 
             LastSyncTime = DateTime.Now;
 

@@ -58,7 +58,7 @@ namespace TimeTracker.Services
             _cancelTokenSource = new CancellationTokenSource();
             _cancellationToken = _cancelTokenSource.Token;
 
-            ScheduleRecurringTask(async () => await _syncService.PushUpdatesAsync(null, null), 30000);
+            ScheduleRecurringTask(async () => await _syncService.PushUpdatesAsync(), 30000);
             ScheduleKeystrokeTask();
             ScheduleMouseClickTask();
         }
@@ -69,6 +69,8 @@ namespace TimeTracker.Services
             _cancelTokenSource.Dispose();
             _keystrokeAPI.RemoveKeyboardHook();
             _keystrokeAPI.RemoveMouseHook();
+            _trackKeystrokeService.StopTracking();
+            _trackMouseClickService.StopTracking();
         }
 
         #endregion
@@ -123,6 +125,7 @@ namespace TimeTracker.Services
 
         private void ScheduleKeystrokeTask()
         {
+            _trackKeystrokeService.StartTracking();
             _keystrokeAPI.CreateKeyboardHook((key) =>
             {
                 _trackKeystrokeService.TrackHook(new KeystrokeModel
@@ -134,6 +137,7 @@ namespace TimeTracker.Services
 
         private void ScheduleMouseClickTask()
         {
+            _trackMouseClickService.StartTracking();
             _keystrokeAPI.CreateMouseHook((mouse) =>
             {
                 _trackMouseClickService.TrackHook(new MouseClickModel

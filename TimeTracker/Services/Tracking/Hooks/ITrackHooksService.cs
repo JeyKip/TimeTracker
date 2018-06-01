@@ -9,5 +9,7 @@ namespace TimeTracker.Services.Tracking.Hooks
         void TrackHook(THookModel entity);
         int GetHooksCount();
         void Clear();
+        void StartTracking();
+        void StopTracking();
     }
 }

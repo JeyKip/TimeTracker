@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using TimeTracker.Common;
 
 namespace TimeTracker.Services.Sync
 {
     public class PushUpdatesResult : ResultBase
     {
-        public DateTime? DataPushedFrom { get; set; }
-        public DateTime? DataPushedUntil { get; set; }
+        public IEnumerable<Guid> MouseIdList { get; set; }
+        public IEnumerable<Guid> KeyboardIdList { get; set; }
     }
 }

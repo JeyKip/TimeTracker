@@ -8,6 +8,6 @@ namespace TimeTracker.Services.Sync
 {
     public interface ISyncService
     {
-        Task<PushUpdatesResult> PushUpdatesAsync(DateTime? startDate, DateTime? endDate);
+        Task<PushUpdatesResult> PushUpdatesAsync();
     }
 }
