@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,6 +22,7 @@ namespace TimeTracker.Services.Tracking.Applications
         private readonly ILogger<TrackInstalledApplicationsService> _logger;
         private List<InstalledApplicationsCheck> _checks = new List<InstalledApplicationsCheck>();
         private readonly object _lockObject = new object();
+        private ConcurrentDictionary<Guid, InstalledApplicationsCheck> _snapshotItems { get; set; }
 
         #endregion
 
@@ -29,6 +31,7 @@ namespace TimeTracker.Services.Tracking.Applications
         public TrackInstalledApplicationsService(ILogger<TrackInstalledApplicationsService> logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _snapshotItems = new ConcurrentDictionary<Guid, InstalledApplicationsCheck>();
         }
 
         #endregion
@@ -120,6 +123,11 @@ namespace TimeTracker.Services.Tracking.Applications
             }
 
             return applications;
+        }
+
+        public bool ClearSnapshot(IEnumerable<Guid> mouseIdList)
+        {
+            return true;
         }
 
         #endregion

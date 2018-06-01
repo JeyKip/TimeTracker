@@ -133,6 +133,11 @@ namespace TimeTracker.Services.Tracking.Applications
             return applications.Values;
         }
 
+        public bool ClearSnapshot(IEnumerable<Guid> mouseIdList)
+        {
+            return true;
+        }
+
         #endregion
     }
 }
