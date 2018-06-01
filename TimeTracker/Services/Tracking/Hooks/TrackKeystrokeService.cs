@@ -40,18 +40,13 @@ namespace TimeTracker.Services.Tracking.Hooks
             }
         }
 
-        public int GetHooksCount()
-        {
-            return _keystrokesCount;
-        }
-
         public void TrackHook(KeystrokeModel entity)
         {
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity));
 
-            _logger.LogDebug($"TrackHook: {entity.KeyCode}");
-            lock (_lockObject) {
+            lock (_lockObject)
+            {
                 _keystrokesCount++;
             }
         }
@@ -60,7 +55,8 @@ namespace TimeTracker.Services.Tracking.Hooks
         {
             var result = new KeyboardClicksSnapshot();
             var count = 0;
-            lock (_lockObject) {
+            lock (_lockObject)
+            {
                 count = _keystrokesCount;
                 Clear();
             }

@@ -11,6 +11,7 @@ using TimeTracker.Common;
 using TimeTracker.Services.Models;
 using TimeTracker.Services.Sync;
 using TimeTracker.Services.Tracking;
+using TimeTracker.Services.Tracking.Applications;
 using TimeTracker.Services.Tracking.Hooks;
 
 namespace TimeTracker.Services
@@ -28,7 +29,8 @@ namespace TimeTracker.Services
         private CancellationTokenSource _cancelTokenSource;
         private CancellationToken _cancellationToken;
 
-        private readonly ITrackApplicationsService _trackApplicationsService;
+        private readonly ITrackInstalledApplicationsService _trackInstalledApplicationsService;
+        private readonly ITrackOpenedApplicationsService _trackOpenedApplicationsService;
         private readonly ITrackKeystrokeService _trackKeystrokeService;
         private readonly ITrackMouseClickService _trackMouseClickService;
         private readonly ISyncService _syncService;
@@ -39,9 +41,17 @@ namespace TimeTracker.Services
 
         #region Constructors
 
-        public TaskRunner(ITrackApplicationsService trackApplicationsService, ITrackKeystrokeService trackKeystrokeService, ITrackMouseClickService trackMouseClickService, ISyncService syncService, KeystrokeAPI keystrokeAPI, ILogger<TaskRunner> logger)
+        public TaskRunner(
+            ITrackInstalledApplicationsService trackInstalledApplicationsService,
+            ITrackOpenedApplicationsService trackOpenedApplicationsService,
+            ITrackKeystrokeService trackKeystrokeService,
+            ITrackMouseClickService trackMouseClickService,
+            ISyncService syncService,
+            KeystrokeAPI keystrokeAPI,
+            ILogger<TaskRunner> logger)
         {
-            _trackApplicationsService = trackApplicationsService ?? throw new ArgumentNullException(nameof(trackApplicationsService));
+            _trackInstalledApplicationsService = trackInstalledApplicationsService ?? throw new ArgumentNullException(nameof(trackInstalledApplicationsService));
+            _trackOpenedApplicationsService = trackOpenedApplicationsService ?? throw new ArgumentNullException(nameof(trackOpenedApplicationsService));
             _trackKeystrokeService = trackKeystrokeService ?? throw new ArgumentNullException(nameof(trackKeystrokeService));
             _trackMouseClickService = trackMouseClickService ?? throw new ArgumentNullException(nameof(trackMouseClickService));
             _syncService = syncService ?? throw new ArgumentNullException(nameof(syncService));
@@ -58,6 +68,8 @@ namespace TimeTracker.Services
             _cancelTokenSource = new CancellationTokenSource();
             _cancellationToken = _cancelTokenSource.Token;
 
+            ScheduleRecurringTask(async () => await _trackInstalledApplicationsService.TrackApplications(), 30000);
+            ScheduleRecurringTask(async () => await _trackOpenedApplicationsService.TrackApplications(), 30000);
             ScheduleRecurringTask(async () => await _syncService.PushUpdatesAsync(null, null), 30000);
             ScheduleKeystrokeTask();
             ScheduleMouseClickTask();
@@ -105,7 +117,7 @@ namespace TimeTracker.Services
                     catch (Exception ex)
                     {
                         sleepTimeMs *= 2;
-                        _logger.LogError($"Error occurred during background method execution.", ex);
+                        _logger.LogError($"Error occurred during background method execution: {ex.Message}.", ex);
                     }
 
                     sw.Stop();
