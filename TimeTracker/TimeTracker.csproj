@@ -230,6 +230,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Models\KeystrokeModel.cs" />
     <Compile Include="Services\Models\MouseClickModel.cs" />
+    <Compile Include="Services\SignIn\ISignInService.cs" />
+    <Compile Include="Services\SignIn\SignInServiceStub.cs" />
     <Compile Include="Services\Storage\Entities\MouseClicksSnapshot.cs" />
     <Compile Include="Services\Storage\Entities\KeyboardClicksSnapshot.cs" />
     <Compile Include="Services\Sync\ApiStub.cs" />
@@ -239,6 +241,7 @@
     <Compile Include="Services\Sync\PushUpdatesResult.cs" />
     <Compile Include="Services\Sync\SendAsyncResult.cs" />
     <Compile Include="Services\Sync\SyncService.cs" />
+    <Compile Include="Services\Tracking\ITakeSnapshot.cs" />
     <Compile Include="Services\Tracking\Hooks\ITrackHooksService.cs" />
     <Compile Include="Services\Tracking\Hooks\TrackMouseClickService.cs" />
     <Compile Include="Services\Tracking\TrackApplicationsService.cs" />

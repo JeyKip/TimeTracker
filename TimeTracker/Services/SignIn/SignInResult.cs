@@ -11,6 +11,7 @@ namespace TimeTracker.Services.SignIn
 {
     public class SignInResult
     {
+        //todo: remove useless fields
         public SignInResult(LoginResult loginResult) {
             AccessToken = loginResult.AccessToken;
             AccessTokenExpiration = loginResult.AccessTokenExpiration;
@@ -23,14 +24,14 @@ namespace TimeTracker.Services.SignIn
             User = loginResult.User;
         }
 
-        public string AccessToken { get; }
-        public DateTime AccessTokenExpiration { get; }
-        public DateTime AuthenticationTime { get; }
-        public string Error { get; }
-        public string IdentityToken { get; }
-        public bool IsError { get; }
-        public string RefreshToken { get; }
-        public HttpMessageHandler RefreshTokenHandler { get; }
-        public ClaimsPrincipal User { get; }
+        public string AccessToken { get; set; }
+        public DateTime AccessTokenExpiration { get; set; }
+        public DateTime AuthenticationTime { get; set; }
+        public string Error { get; set; }
+        public string IdentityToken { get; set; }
+        public bool IsError { get; set; }
+        public string RefreshToken { get; set; }
+        public HttpMessageHandler RefreshTokenHandler { get; set; }
+        public ClaimsPrincipal User { get; set; }
     }
 }

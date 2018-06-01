@@ -10,11 +10,25 @@ using TimeTracker.WebView;
 
 namespace TimeTracker.Services.SignIn
 {
-    public class SignInService
+    public class SignInService : ISignInService
     {
         #region Fields and Properties
 
         private OidcClient _oidcClient;
+
+        public bool IsAuthorized
+        {
+            get
+            {
+                return !string.IsNullOrWhiteSpace(AccessToken);
+            }
+        }
+
+        public string UserDisplayName { get; set; }
+
+        public string AccessToken { get; set; }
+
+        public string RefreshToken { get; set; }
 
         #endregion
 
@@ -33,18 +47,6 @@ namespace TimeTracker.Services.SignIn
 
             _oidcClient = new OidcClient(options);
         }
-
-        public bool IsAuthorized {
-            get {
-                return !string.IsNullOrWhiteSpace(AccessToken);
-            }
-        }
-
-        public string UserDisplayName { get; set; }
-
-        public string AccessToken { get; set; }
-
-        public string RefreshToken { get; set; }
 
         #endregion
 

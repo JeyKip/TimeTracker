@@ -58,7 +58,7 @@ namespace TimeTracker.Services
             _cancelTokenSource = new CancellationTokenSource();
             _cancellationToken = _cancelTokenSource.Token;
 
-            ScheduleRecurringTask(async () => await _syncService.PushUpdatesAsync(null, null), 1000);
+            ScheduleRecurringTask(async () => await _syncService.PushUpdatesAsync(null, null), 30000);
             ScheduleKeystrokeTask();
             ScheduleMouseClickTask();
         }

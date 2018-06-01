@@ -2,5 +2,6 @@
 {
     public class KeyboardClicksSnapshot
     {
+        public int PressButtonCount { get; set; }
     }
 }

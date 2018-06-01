@@ -33,7 +33,7 @@ namespace TimeTracker.Services.Sync
                     var dir = $"{AppDomain.CurrentDomain.BaseDirectory}\\Logs";
                     if (!Directory.Exists(dir))
                         Directory.CreateDirectory(dir);
-                    var fileName = $"dump_{DateTime.UtcNow.ToString("yyMMdd HH:mm:ss")}";
+                    var fileName = $"dump_{DateTime.UtcNow.ToString("yyMMdd_HHmmss")}";
                     // serialize JSON to a string and then write string to a file
                     File.WriteAllText(Path.Combine(dir, fileName), JsonConvert.SerializeObject(request));
                 }

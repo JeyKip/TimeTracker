@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TimeTracker.Services.Models;
+using TimeTracker.Services.Storage;
 
 namespace TimeTracker.Services.Tracking.Hooks
 {
@@ -12,13 +13,13 @@ namespace TimeTracker.Services.Tracking.Hooks
     {
     }
 
-    public class TrackMouseClickService : ITrackMouseClickService
+    public class TrackMouseClickService : ITrackMouseClickService, ITakeSnapshot<MouseClicksSnapshot>
     {
         #region Fields and properties
 
         // maybe we should count separately left and right buttons clicks
         private int _mouseClicksCount = 0;
-
+        private object _lockObject = new object();
         private readonly ILogger<TrackMouseClickService> _logger;
 
         #endregion
@@ -34,7 +35,10 @@ namespace TimeTracker.Services.Tracking.Hooks
 
         public void Clear()
         {
-            _mouseClicksCount = 0;
+            lock (_lockObject)
+            {
+                _mouseClicksCount = 0;
+            }
         }
 
         public int GetHooksCount()
@@ -48,7 +52,23 @@ namespace TimeTracker.Services.Tracking.Hooks
                 throw new ArgumentNullException(nameof(entity));
 
             _logger.LogDebug($"TrackMouseHook: {Newtonsoft.Json.JsonConvert.SerializeObject(entity)}");
-            _mouseClicksCount++;
+            lock (_lockObject)
+            {
+                _mouseClicksCount++;
+            }
+        }
+
+        public MouseClicksSnapshot TakeSnapshot()
+        {
+            var result = new MouseClicksSnapshot();
+            var count = 0;
+            lock (_lockObject)
+            {
+                count = _mouseClicksCount;
+                Clear();
+            }
+            result.MouseClickCount = count;
+            return result;
         }
     }
 }

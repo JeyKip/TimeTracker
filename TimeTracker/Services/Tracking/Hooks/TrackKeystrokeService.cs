@@ -13,12 +13,12 @@ namespace TimeTracker.Services.Tracking.Hooks
     {
     }
 
-    public class TrackKeystrokeService : ITrackKeystrokeService
+    public class TrackKeystrokeService : ITrackKeystrokeService, ITakeSnapshot<KeyboardClicksSnapshot>
     {
         #region Fields and properties
 
         private int _keystrokesCount = 0;
-
+        private object _lockObject = new object();
         private readonly ILogger<TrackKeystrokeService> _logger;
 
         #endregion
@@ -34,7 +34,10 @@ namespace TimeTracker.Services.Tracking.Hooks
 
         public void Clear()
         {
-            _keystrokesCount = 0;
+            lock (_lockObject)
+            {
+                _keystrokesCount = 0;
+            }
         }
 
         public int GetHooksCount()
@@ -48,7 +51,21 @@ namespace TimeTracker.Services.Tracking.Hooks
                 throw new ArgumentNullException(nameof(entity));
 
             _logger.LogDebug($"TrackHook: {entity.KeyCode}");
-            _keystrokesCount++;
+            lock (_lockObject) {
+                _keystrokesCount++;
+            }
+        }
+
+        public KeyboardClicksSnapshot TakeSnapshot()
+        {
+            var result = new KeyboardClicksSnapshot();
+            var count = 0;
+            lock (_lockObject) {
+                count = _keystrokesCount;
+                Clear();
+            }
+            result.PressButtonCount = count;
+            return result;
         }
     }
 }

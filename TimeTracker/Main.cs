@@ -21,7 +21,7 @@ namespace TimeTracker
     {
         #region Fields and properties
 
-        private readonly SignInService _signInService;
+        private readonly ISignInService _signInService;
         private readonly ITaskRunner _taskRunner;
         private readonly ILogger<Main> _logger;
 
@@ -29,7 +29,7 @@ namespace TimeTracker
 
         #region Constructors
 
-        public Main(ILogger<Main> logger, SignInService signInService, ITaskRunner taskRunner)
+        public Main(ILogger<Main> logger, ISignInService signInService, ITaskRunner taskRunner)
         {
             InitializeComponent();
 

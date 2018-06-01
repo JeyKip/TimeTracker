@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TimeTracker.Services.Storage;
+using TimeTracker.Services.Tracking;
 
 namespace TimeTracker.Services.Sync
 {
@@ -13,11 +14,15 @@ namespace TimeTracker.Services.Sync
     public class SyncService : ISyncService
     {
         private readonly ITrackApiWrapper _trackApiWrapper;
+        private readonly ITakeSnapshot<MouseClicksSnapshot> _mouseSnapshot;
+        private readonly ITakeSnapshot<KeyboardClicksSnapshot> _keyboardSnapshot;
         private object _lockObject = new object();
 
-        public SyncService(ITrackApiWrapper trackApiWrapper)
+        public SyncService(ITrackApiWrapper trackApiWrapper, ITakeSnapshot<MouseClicksSnapshot> mouseSnapshot, ITakeSnapshot<KeyboardClicksSnapshot> keyboardSnapshot)
         {
             _trackApiWrapper = trackApiWrapper;
+            _mouseSnapshot = mouseSnapshot;
+            _keyboardSnapshot = keyboardSnapshot;
         }
 
         public DateTime LastSyncTime { get; private set; }
@@ -40,8 +45,8 @@ namespace TimeTracker.Services.Sync
             // gather data from services
             var request = new PushUpdatesRequest
             {
-                MouseClicks = null,
-                KeyboardClicks = null
+                MouseClicks = _mouseSnapshot.TakeSnapshot(),
+                KeyboardClicks = _keyboardSnapshot.TakeSnapshot()
             };
 
             // push request object to API
