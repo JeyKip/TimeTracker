@@ -51,6 +51,26 @@
   <PropertyGroup>
     <ApplicationIcon>alarm-clock-blue-32.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="IdentityModel, Version=3.6.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\IdentityModel.3.6.1\lib\net461\IdentityModel.dll</HintPath>
@@ -232,8 +252,16 @@
     <Compile Include="Services\Models\MouseClickModel.cs" />
     <Compile Include="Services\SignIn\ISignInService.cs" />
     <Compile Include="Services\SignIn\SignInServiceStub.cs" />
-    <Compile Include="Services\Storage\Entities\MouseClicksSnapshot.cs" />
-    <Compile Include="Services\Storage\Entities\KeyboardClicksSnapshot.cs" />
+    <Compile Include="Services\Storage\Entities\Applications\BaseApplicationCheck.cs" />
+    <Compile Include="Services\Storage\Entities\Applications\BaseApplicationSnapshot.cs" />
+    <Compile Include="Services\Storage\Entities\Applications\OpenedApplicationsSnapshot.cs" />
+    <Compile Include="Services\Storage\Entities\Applications\InstalledApplicationsSnapshot.cs" />
+    <Compile Include="Services\Storage\Entities\Applications\OpenedApplication.cs" />
+    <Compile Include="Services\Storage\Entities\Applications\InstalledApplication.cs" />
+    <Compile Include="Services\Storage\Entities\Applications\OpenedApplicationsCheck.cs" />
+    <Compile Include="Services\Storage\Entities\Applications\InstalledApplicationsCheck.cs" />
+    <Compile Include="Services\Storage\Entities\Hooks\MouseClicksSnapshot.cs" />
+    <Compile Include="Services\Storage\Entities\Hooks\KeyboardClicksSnapshot.cs" />
     <Compile Include="Services\Sync\ApiStub.cs" />
     <Compile Include="Services\Sync\ISyncService.cs" />
     <Compile Include="Services\Sync\ITrackApiWrapper.cs" />
@@ -241,10 +269,12 @@
     <Compile Include="Services\Sync\PushUpdatesResult.cs" />
     <Compile Include="Services\Sync\SendAsyncResult.cs" />
     <Compile Include="Services\Sync\SyncService.cs" />
+    <Compile Include="Services\Tracking\Applications\ITrackApplicationsService.cs" />
+    <Compile Include="Services\Tracking\Applications\TrackOpenedApplicationsService.cs" />
     <Compile Include="Services\Tracking\ITakeSnapshot.cs" />
     <Compile Include="Services\Tracking\Hooks\ITrackHooksService.cs" />
     <Compile Include="Services\Tracking\Hooks\TrackMouseClickService.cs" />
-    <Compile Include="Services\Tracking\TrackApplicationsService.cs" />
+    <Compile Include="Services\Tracking\Applications\TrackInstalledApplicationsService.cs" />
     <Compile Include="Services\SignIn\SignInResult.cs" />
     <Compile Include="Services\SignIn\SignInService.cs" />
     <Compile Include="Services\TaskRunner.cs" />
@@ -316,5 +346,6 @@
       <Name>Keystroke.API</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

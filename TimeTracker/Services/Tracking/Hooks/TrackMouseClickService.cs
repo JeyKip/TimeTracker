@@ -49,11 +49,6 @@ namespace TimeTracker.Services.Tracking.Hooks
             }
         }
 
-        public int GetHooksCount()
-        {
-            return _mouseClicksCount;
-        }
-
         public void TrackHook(MouseClickModel entity)
         {
             // do not track clicks if tracking is not started
@@ -63,7 +58,6 @@ namespace TimeTracker.Services.Tracking.Hooks
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity));
 
-            _logger.LogDebug($"TrackMouseHook: {Newtonsoft.Json.JsonConvert.SerializeObject(entity)}");
             lock (_lockObject)
             {
                 _mouseClicksCount++;

@@ -12,6 +12,7 @@ using TimeTracker.Services.SignIn;
 using TimeTracker.Services.Storage;
 using TimeTracker.Services.Sync;
 using TimeTracker.Services.Tracking;
+using TimeTracker.Services.Tracking.Applications;
 using TimeTracker.Services.Tracking.Hooks;
 
 namespace TimeTracker
@@ -50,11 +51,14 @@ namespace TimeTracker
                 .AddTransient<Main>()
                 .AddSingleton<ISignInService, SignInService>()
                 .AddSingleton<ITaskRunner, TaskRunner>()
-                .AddSingleton<ITrackApplicationsService, TrackApplicationsService>()
+                .AddSingleton<ITrackInstalledApplicationsService, TrackInstalledApplicationsService>()
+                .AddSingleton<ITrackOpenedApplicationsService, TrackOpenedApplicationsService>()
                 .AddSingleton<ITrackKeystrokeService, TrackKeystrokeService>()
                 .AddSingleton<ITrackMouseClickService, TrackMouseClickService>()
-                .AddSingleton<ITakeSnapshot<KeyboardClicksSnapshot>>(x => (ITakeSnapshot<KeyboardClicksSnapshot>)x.GetService<ITrackKeystrokeService>())
-                .AddSingleton<ITakeSnapshot<MouseClicksSnapshot>>(x=>(ITakeSnapshot<MouseClicksSnapshot>)x.GetService<ITrackMouseClickService>())
+                .AddSingleton(x => (ITakeSnapshot<KeyboardClicksSnapshot>)x.GetService<ITrackKeystrokeService>())
+                .AddSingleton(x => (ITakeSnapshot<MouseClicksSnapshot>)x.GetService<ITrackMouseClickService>())
+                .AddSingleton<ITakeSnapshot<InstalledApplicationsSnapshot>>(x => x.GetService<ITrackInstalledApplicationsService>())
+                .AddSingleton<ITakeSnapshot<OpenedApplicationsSnapshot>>(x => x.GetService<ITrackOpenedApplicationsService>())
                 .AddSingleton<ISyncService, SyncService>()
                 .AddSingleton<KeystrokeAPI>()
                 .AddTransient<ITrackApiWrapper, ApiStubWrapper>()
