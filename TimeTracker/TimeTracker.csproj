@@ -169,6 +169,7 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Management" />
     <Reference Include="System.Net.Http, Version=4.1.1.2, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>packages\System.Net.Http.4.3.3\lib\net46\System.Net.Http.dll</HintPath>
     </Reference>
@@ -261,6 +262,8 @@
     <Compile Include="Services\Storage\Entities\Hooks\KeyboardClicksSnapshot.cs" />
     <Compile Include="Services\Storage\Entities\System\DnsCacheInfo.cs" />
     <Compile Include="Services\Storage\Entities\System\DnsCacheSnapshot.cs" />
+    <Compile Include="Services\Storage\Entities\System\SystemPerformanceSnapshot.cs" />
+    <Compile Include="Services\Storage\Entities\System\SystemPerformance.cs" />
     <Compile Include="Services\Sync\ApiStub.cs" />
     <Compile Include="Services\Sync\ISyncService.cs" />
     <Compile Include="Services\Sync\ITrackApiWrapper.cs" />
@@ -278,6 +281,7 @@
     <Compile Include="Services\SignIn\SignInService.cs" />
     <Compile Include="Services\TaskRunner.cs" />
     <Compile Include="Services\Tracking\Hooks\TrackKeystrokeService.cs" />
+    <Compile Include="Services\Tracking\System\TrackSystemPerformanceService.cs" />
     <Compile Include="Services\Tracking\System\TrackDnsCacheService.cs" />
     <Compile Include="WebView\ExtendedWebBrowser.cs">
       <SubType>Component</SubType>

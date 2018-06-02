@@ -35,6 +35,7 @@ namespace TimeTracker.Services
         private readonly ITrackKeystrokeService _trackKeystrokeService;
         private readonly ITrackMouseClickService _trackMouseClickService;
         private readonly ITrackDnsCacheService _trackDnsCacheService;
+        private readonly ITrackSystemPerformanceService _trackSystemPerformanceService;
         private readonly ISyncService _syncService;
         private readonly KeystrokeAPI _keystrokeAPI;
         private readonly ILogger<TaskRunner> _logger;
@@ -49,6 +50,7 @@ namespace TimeTracker.Services
             ITrackKeystrokeService trackKeystrokeService,
             ITrackMouseClickService trackMouseClickService,
             ITrackDnsCacheService trackDnsCacheService,
+            ITrackSystemPerformanceService trackSystemPerformanceService,
             ISyncService syncService,
             KeystrokeAPI keystrokeAPI,
             ILogger<TaskRunner> logger)
@@ -58,6 +60,7 @@ namespace TimeTracker.Services
             _trackKeystrokeService = trackKeystrokeService ?? throw new ArgumentNullException(nameof(trackKeystrokeService));
             _trackMouseClickService = trackMouseClickService ?? throw new ArgumentNullException(nameof(trackMouseClickService));
             _trackDnsCacheService = trackDnsCacheService ?? throw new ArgumentNullException(nameof(trackDnsCacheService));
+            _trackSystemPerformanceService = trackSystemPerformanceService ?? throw new ArgumentNullException(nameof(trackSystemPerformanceService));
             _syncService = syncService ?? throw new ArgumentNullException(nameof(syncService));
             _keystrokeAPI = keystrokeAPI ?? throw new ArgumentNullException(nameof(keystrokeAPI));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -75,6 +78,7 @@ namespace TimeTracker.Services
             ScheduleRecurringTask(async () => await _trackInstalledApplicationsService.TrackApplications(), 30000);
             ScheduleRecurringTask(async () => await _trackOpenedApplicationsService.TrackApplications(), 30000);
             ScheduleRecurringTask(async () => await _trackDnsCacheService.Track(), 30000);
+            ScheduleRecurringTask(async () => await _trackSystemPerformanceService.Track(), 30000);
             ScheduleRecurringTask(async () => await _syncService.PushUpdatesAsync(), 30000);
             ScheduleKeystrokeTask();
             ScheduleMouseClickTask();

@@ -9,5 +9,6 @@ namespace TimeTracker.Services.Sync
         public InstalledApplicationsSnapshot InstalledApplications { get; internal set; }
         public OpenedApplicationsSnapshot OpenedApplications { get; internal set; }
         public DnsCacheSnapshot DnsCache { get; set; }
+        public SystemPerformanceSnapshot SystemPerformance { get; set; }
     }
 }
