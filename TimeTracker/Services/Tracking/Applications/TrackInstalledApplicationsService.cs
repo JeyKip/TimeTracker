@@ -20,9 +20,7 @@ namespace TimeTracker.Services.Tracking.Applications
         #region Fields and properties
 
         private readonly ILogger<TrackInstalledApplicationsService> _logger;
-        private List<InstalledApplicationsCheck> _checks = new List<InstalledApplicationsCheck>();
-        private readonly object _lockObject = new object();
-        private ConcurrentDictionary<Guid, InstalledApplicationsCheck> _snapshotItems { get; set; }
+        private ConcurrentDictionary<Guid, InstalledApplicationsSnapshotItem> _snapshotItems;
 
         #endregion
 
@@ -31,7 +29,7 @@ namespace TimeTracker.Services.Tracking.Applications
         public TrackInstalledApplicationsService(ILogger<TrackInstalledApplicationsService> logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _snapshotItems = new ConcurrentDictionary<Guid, InstalledApplicationsCheck>();
+            _snapshotItems = new ConcurrentDictionary<Guid, InstalledApplicationsSnapshotItem>();
         }
 
         #endregion
@@ -47,13 +45,14 @@ namespace TimeTracker.Services.Tracking.Applications
                     var installed32Bits = GetApplications(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall");
                     var installed64Bits = GetApplications(@"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall");
 
-                    var check = new InstalledApplicationsCheck();
+                    var check = new InstalledApplicationsSnapshotItem();
                     check.Applications.AddRange(installed32Bits.Values);
                     check.Applications.AddRange(installed64Bits.Values.Where(x => !check.Applications.Any(s => s.Name == x.Name)));
 
-                    lock (_lockObject)
+                    if (!_snapshotItems.TryAdd(check.Id, check))
                     {
-                        _checks.Add(check);
+                        _logger.LogError("Failed to save snapshot of installed applications.");
+                        return new ResultBase { Status = false };
                     }
 
                     return new ResultBase { Status = true };
@@ -69,30 +68,35 @@ namespace TimeTracker.Services.Tracking.Applications
             });
         }
 
-        public Task Clear()
-        {
-            return Task.Run(() =>
-            {
-                lock (_lockObject)
-                {
-                    _checks.Clear();
-                }
-            });
-        }
-
         #endregion
 
         #region ITakeSnapshot
 
         public InstalledApplicationsSnapshot TakeSnapshot()
         {
-            lock (_lockObject)
+            return new InstalledApplicationsSnapshot
             {
-                var result = new InstalledApplicationsSnapshot();
-                result.Checks.AddRange(_checks);
-                Clear();
-                return result;
+                Items = _snapshotItems.Values
+            };
+        }
+
+        public bool ClearSnapshot(IEnumerable<Guid> idList)
+        {
+            if (idList == null)
+                throw new ArgumentNullException(nameof(idList));
+
+            var result = true;
+
+            foreach (var checkId in idList)
+            {
+                if (!_snapshotItems.TryRemove(checkId, out InstalledApplicationsSnapshotItem check))
+                {
+                    _logger.LogError($"Cannot remove check of installed applications with id = {checkId}");
+                    result = false;
+                }
             }
+
+            return result;
         }
 
         #endregion
@@ -123,11 +127,6 @@ namespace TimeTracker.Services.Tracking.Applications
             }
 
             return applications;
-        }
-
-        public bool ClearSnapshot(IEnumerable<Guid> mouseIdList)
-        {
-            return true;
         }
 
         #endregion

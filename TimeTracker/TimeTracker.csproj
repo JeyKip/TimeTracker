@@ -252,14 +252,11 @@
     <Compile Include="Services\Models\MouseClickModel.cs" />
     <Compile Include="Services\SignIn\ISignInService.cs" />
     <Compile Include="Services\SignIn\SignInServiceStub.cs" />
-    <Compile Include="Services\Storage\Entities\Applications\BaseApplicationCheck.cs" />
     <Compile Include="Services\Storage\Entities\Applications\BaseApplicationSnapshot.cs" />
     <Compile Include="Services\Storage\Entities\Applications\OpenedApplicationsSnapshot.cs" />
     <Compile Include="Services\Storage\Entities\Applications\InstalledApplicationsSnapshot.cs" />
     <Compile Include="Services\Storage\Entities\Applications\OpenedApplication.cs" />
     <Compile Include="Services\Storage\Entities\Applications\InstalledApplication.cs" />
-    <Compile Include="Services\Storage\Entities\Applications\OpenedApplicationsCheck.cs" />
-    <Compile Include="Services\Storage\Entities\Applications\InstalledApplicationsCheck.cs" />
     <Compile Include="Services\Storage\Entities\Hooks\MouseClicksSnapshot.cs" />
     <Compile Include="Services\Storage\Entities\Hooks\KeyboardClicksSnapshot.cs" />
     <Compile Include="Services\Sync\ApiStub.cs" />

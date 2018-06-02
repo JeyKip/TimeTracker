@@ -6,5 +6,7 @@ namespace TimeTracker.Services.Sync
     {
         public MouseClicksSnapshot MouseClicks { get; internal set; }
         public KeyboardClicksSnapshot KeyboardClicks { get; internal set; }
+        public InstalledApplicationsSnapshot InstalledApplications { get; internal set; }
+        public OpenedApplicationsSnapshot OpenedApplications { get; internal set; }
     }
 }

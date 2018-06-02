@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -20,8 +21,7 @@ namespace TimeTracker.Services.Tracking.Applications
         #region Fields and properties
 
         private readonly ILogger<TrackOpenedApplicationsService> _logger;
-        private List<OpenedApplicationsCheck> _checks = new List<OpenedApplicationsCheck>();
-        private readonly object _lockObject = new object();
+        private ConcurrentDictionary<Guid, OpenedApplicationsSnapshotItem> _snapshotItems;
 
         #endregion
 
@@ -30,6 +30,7 @@ namespace TimeTracker.Services.Tracking.Applications
         public TrackOpenedApplicationsService(ILogger<TrackOpenedApplicationsService> logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _snapshotItems = new ConcurrentDictionary<Guid, OpenedApplicationsSnapshotItem>();
         }
 
         #endregion
@@ -43,12 +44,13 @@ namespace TimeTracker.Services.Tracking.Applications
                 try
                 {
                     var applications = GetApplications();
-                    var check = new OpenedApplicationsCheck();
+                    var check = new OpenedApplicationsSnapshotItem();
                     check.Applications.AddRange(applications);
 
-                    lock (_lockObject)
+                    if (!_snapshotItems.TryAdd(check.Id, check))
                     {
-                        _checks.Add(check);
+                        _logger.LogError("Failed to save snapshot of opened applications.");
+                        return new ResultBase { Status = false };
                     }
 
                     return new ResultBase { Status = true };
@@ -64,30 +66,35 @@ namespace TimeTracker.Services.Tracking.Applications
             });
         }
 
-        public Task Clear()
-        {
-            return Task.Run(() =>
-            {
-                lock (_lockObject)
-                {
-                    _checks.Clear();
-                }
-            });
-        }
-
         #endregion
 
         #region ITakeSnapshot
 
         public OpenedApplicationsSnapshot TakeSnapshot()
         {
-            lock (_lockObject)
+            return new OpenedApplicationsSnapshot
             {
-                var result = new OpenedApplicationsSnapshot();
-                result.Checks.AddRange(_checks);
-                Clear();
-                return result;
+                Items = _snapshotItems.Values
+            };
+        }
+
+        public bool ClearSnapshot(IEnumerable<Guid> idList)
+        {
+            if (idList == null)
+                throw new ArgumentNullException(nameof(idList));
+
+            var result = true;
+
+            foreach (var checkId in idList)
+            {
+                if (!_snapshotItems.TryRemove(checkId, out OpenedApplicationsSnapshotItem check))
+                {
+                    _logger.LogError($"Cannot remove check of installed applications with id = {checkId}");
+                    result = false;
+                }
             }
+
+            return result;
         }
 
         #endregion
@@ -131,11 +138,6 @@ namespace TimeTracker.Services.Tracking.Applications
             }
 
             return applications.Values;
-        }
-
-        public bool ClearSnapshot(IEnumerable<Guid> mouseIdList)
-        {
-            return true;
         }
 
         #endregion

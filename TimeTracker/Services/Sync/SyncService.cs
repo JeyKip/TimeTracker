@@ -16,13 +16,21 @@ namespace TimeTracker.Services.Sync
         private readonly ITrackApiWrapper _trackApiWrapper;
         private readonly ITakeSnapshot<MouseClicksSnapshot> _mouseSnapshot;
         private readonly ITakeSnapshot<KeyboardClicksSnapshot> _keyboardSnapshot;
-        private object _lockObject = new object();
+        private readonly ITakeSnapshot<InstalledApplicationsSnapshot> _installedApplicationsSnapshot;
+        private readonly ITakeSnapshot<OpenedApplicationsSnapshot> _openedApplicationsSnapshot;
 
-        public SyncService(ITrackApiWrapper trackApiWrapper, ITakeSnapshot<MouseClicksSnapshot> mouseSnapshot, ITakeSnapshot<KeyboardClicksSnapshot> keyboardSnapshot)
+        public SyncService(
+            ITrackApiWrapper trackApiWrapper,
+            ITakeSnapshot<MouseClicksSnapshot> mouseSnapshot,
+            ITakeSnapshot<KeyboardClicksSnapshot> keyboardSnapshot,
+            ITakeSnapshot<InstalledApplicationsSnapshot> installedApplicationsSnapshot,
+            ITakeSnapshot<OpenedApplicationsSnapshot> openedApplicationsSnapshot)
         {
             _trackApiWrapper = trackApiWrapper;
             _mouseSnapshot = mouseSnapshot;
             _keyboardSnapshot = keyboardSnapshot;
+            _installedApplicationsSnapshot = installedApplicationsSnapshot;
+            _openedApplicationsSnapshot = openedApplicationsSnapshot;
         }
 
         public DateTime LastSyncTime { get; private set; }
@@ -44,7 +52,9 @@ namespace TimeTracker.Services.Sync
             var request = new PushUpdatesRequest
             {
                 MouseClicks = _mouseSnapshot.TakeSnapshot(),
-                KeyboardClicks = _keyboardSnapshot.TakeSnapshot()
+                KeyboardClicks = _keyboardSnapshot.TakeSnapshot(),
+                InstalledApplications = _installedApplicationsSnapshot.TakeSnapshot(),
+                OpenedApplications = _openedApplicationsSnapshot.TakeSnapshot()
             };
 
             // push request object to API
@@ -58,14 +68,18 @@ namespace TimeTracker.Services.Sync
             }
 
             // gather ids of handles snapshot items
-            result.MouseIdList = request.MouseClicks.Items.Select(t=>t.Id);
+            result.MouseIdList = request.MouseClicks.Items.Select(t => t.Id);
             result.KeyboardIdList = request.KeyboardClicks.Items.Select(t => t.Id);
-            
+            result.InstalledAppsIdList = request.InstalledApplications.Items.Select(t => t.Id);
+            result.OpenedAppsIdList = request.OpenedApplications.Items.Select(t => t.Id);
+
             // clear items which were already posted to API
             _mouseSnapshot.ClearSnapshot(result.MouseIdList);
             _keyboardSnapshot.ClearSnapshot(result.KeyboardIdList);
+            _installedApplicationsSnapshot.ClearSnapshot(result.InstalledAppsIdList);
+            _openedApplicationsSnapshot.ClearSnapshot(result.OpenedAppsIdList);
 
-            LastSyncTime = DateTime.Now;
+            LastSyncTime = DateTime.UtcNow;
 
             return result;
         }
