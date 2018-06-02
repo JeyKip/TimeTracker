@@ -14,7 +14,7 @@ namespace TimeTracker.Services.Storage
     public class MemoryInfo
     {
         public long UsedInBytes { get; set; }
-        public long UsedInPercents { get { return (long)((UsedInBytes / (float)CapacityInBytes) * 100); } }
+        public int UsedInPercents { get { return (int)((UsedInBytes / (float)CapacityInBytes) * 100); } }
         public long CapacityInBytes { get; set; }
     }
 
@@ -23,5 +23,6 @@ namespace TimeTracker.Services.Storage
         public string Name { get; set; }
         public long CapacityInBytes { get; set; }
         public long AvailableSpaceInBytes { get; set; }
+        public int AvailableSpaceInPercents { get { return (int)((AvailableSpaceInBytes / (float)CapacityInBytes) * 100); } }
     }
 }
