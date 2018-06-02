@@ -12,6 +12,6 @@ namespace TimeTracker.Services.Tracking
         /// </summary>
         /// <returns>An instance </returns>
         TSnapshotModel TakeSnapshot();
-        bool ClearSnapshot(IEnumerable<Guid> idList2Remove);
+        bool ClearSnapshot(IEnumerable<Guid> idList);
     }
 }

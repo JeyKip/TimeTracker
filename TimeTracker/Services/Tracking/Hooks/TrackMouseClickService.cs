@@ -98,7 +98,7 @@ namespace TimeTracker.Services.Tracking.Hooks
             }
             var result = new MouseClicksSnapshot
             {
-                Items = _snapshotItems.Values.AsEnumerable()
+                Items = _snapshotItems.Values
             };
             return result;
         }
@@ -108,6 +108,7 @@ namespace TimeTracker.Services.Tracking.Hooks
             var result = true;
             foreach (var id in idList)
             {
+                // TODO: maybe we should set result to false if any item is not removed?
                 if (!_snapshotItems.TryRemove(id, out var removedItem))
                     _logger.LogError($"Failed to remove mouse snapshot with Id {id}");
             }

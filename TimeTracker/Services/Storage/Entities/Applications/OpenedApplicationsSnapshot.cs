@@ -1,6 +1,10 @@
 ﻿namespace TimeTracker.Services.Storage
 {
-    public class OpenedApplicationsSnapshot : BaseApplicationSnapshot<OpenedApplicationsCheck>
+    public class OpenedApplicationsSnapshot : BaseApplicationSnapshot<OpenedApplicationsSnapshotItem>
+    {
+    }
+
+    public class OpenedApplicationsSnapshotItem : BaseApplicationSnapshotItem<OpenedApplication>
     {
     }
 }

@@ -13,6 +13,7 @@ using TimeTracker.Services.Sync;
 using TimeTracker.Services.Tracking;
 using TimeTracker.Services.Tracking.Applications;
 using TimeTracker.Services.Tracking.Hooks;
+using TimeTracker.Services.Tracking.System;
 using TimeTracker.Services.Tracking.Screenshots;
 
 namespace TimeTracker.Services
@@ -35,6 +36,7 @@ namespace TimeTracker.Services
         private readonly IScreenshotService _screenshotService;
         private readonly ITrackKeystrokeService _trackKeystrokeService;
         private readonly ITrackMouseClickService _trackMouseClickService;
+        private readonly ITrackDnsCacheService _trackDnsCacheService;
         private readonly ISyncService _syncService;
         private readonly KeystrokeAPI _keystrokeAPI;
         private readonly ILogger<TaskRunner> _logger;
@@ -48,6 +50,7 @@ namespace TimeTracker.Services
             ITrackOpenedApplicationsService trackOpenedApplicationsService,
             ITrackKeystrokeService trackKeystrokeService,
             ITrackMouseClickService trackMouseClickService,
+            ITrackDnsCacheService trackDnsCacheService,
             IScreenshotService screenshotService,
             ISyncService syncService,
             KeystrokeAPI keystrokeAPI,
@@ -57,6 +60,7 @@ namespace TimeTracker.Services
             _trackOpenedApplicationsService = trackOpenedApplicationsService ?? throw new ArgumentNullException(nameof(trackOpenedApplicationsService));
             _trackKeystrokeService = trackKeystrokeService ?? throw new ArgumentNullException(nameof(trackKeystrokeService));
             _trackMouseClickService = trackMouseClickService ?? throw new ArgumentNullException(nameof(trackMouseClickService));
+            _trackDnsCacheService = trackDnsCacheService ?? throw new ArgumentNullException(nameof(trackDnsCacheService));
             _syncService = syncService ?? throw new ArgumentNullException(nameof(syncService));
             _keystrokeAPI = keystrokeAPI ?? throw new ArgumentNullException(nameof(keystrokeAPI));
             _screenshotService = screenshotService ?? throw new ArgumentNullException(nameof(screenshotService));
@@ -74,6 +78,7 @@ namespace TimeTracker.Services
 
             ScheduleRecurringTask(async () => await _trackInstalledApplicationsService.TrackApplications(), 30000);
             ScheduleRecurringTask(async () => await _trackOpenedApplicationsService.TrackApplications(), 30000);
+            ScheduleRecurringTask(async () => await _trackDnsCacheService.Track(), 30000);
             ScheduleRecurringTask(async () => await _screenshotService.TrackAsync(), 300000);
             ScheduleRecurringTask(async () => await _syncService.PushUpdatesAsync(), 30000);
             ScheduleKeystrokeTask();
