@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TimeTracker.Services.Storage;
 using TimeTracker.Services.Tracking;
+using TimeTracker.Services.Tracking.Screenshots;
 
 namespace TimeTracker.Services.Sync
 {
@@ -16,13 +17,16 @@ namespace TimeTracker.Services.Sync
         private readonly ITrackApiWrapper _trackApiWrapper;
         private readonly ITakeSnapshot<MouseClicksSnapshot> _mouseSnapshot;
         private readonly ITakeSnapshot<KeyboardClicksSnapshot> _keyboardSnapshot;
+        private readonly ITakeSnapshot<ScreenshotSnapshot> _screenshotService;
         private object _lockObject = new object();
 
-        public SyncService(ITrackApiWrapper trackApiWrapper, ITakeSnapshot<MouseClicksSnapshot> mouseSnapshot, ITakeSnapshot<KeyboardClicksSnapshot> keyboardSnapshot)
+        public SyncService(ITrackApiWrapper trackApiWrapper, ITakeSnapshot<MouseClicksSnapshot> mouseSnapshot, ITakeSnapshot<KeyboardClicksSnapshot> keyboardSnapshot,
+            ITakeSnapshot<ScreenshotSnapshot> screenshotService)
         {
             _trackApiWrapper = trackApiWrapper;
             _mouseSnapshot = mouseSnapshot;
             _keyboardSnapshot = keyboardSnapshot;
+            _screenshotService = screenshotService;
         }
 
         public DateTime LastSyncTime { get; private set; }
@@ -44,7 +48,8 @@ namespace TimeTracker.Services.Sync
             var request = new PushUpdatesRequest
             {
                 MouseClicks = _mouseSnapshot.TakeSnapshot(),
-                KeyboardClicks = _keyboardSnapshot.TakeSnapshot()
+                KeyboardClicks = _keyboardSnapshot.TakeSnapshot(),
+                Screenshots = _screenshotService.TakeSnapshot()
             };
 
             // push request object to API
@@ -60,10 +65,11 @@ namespace TimeTracker.Services.Sync
             // gather ids of handles snapshot items
             result.MouseIdList = request.MouseClicks.Items.Select(t=>t.Id);
             result.KeyboardIdList = request.KeyboardClicks.Items.Select(t => t.Id);
-            
+
             // clear items which were already posted to API
             _mouseSnapshot.ClearSnapshot(result.MouseIdList);
             _keyboardSnapshot.ClearSnapshot(result.KeyboardIdList);
+            _screenshotService.ClearSnapshot(request.Screenshots.Screenshots.Select(t=>t.Id));
 
             LastSyncTime = DateTime.Now;
 

@@ -2,6 +2,8 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -36,6 +38,17 @@ namespace TimeTracker.Services.Sync
                     var fileName = $"dump_{DateTime.UtcNow.ToString("yyMMdd_HHmmss")}";
                     // serialize JSON to a string and then write string to a file
                     File.WriteAllText(Path.Combine(dir, fileName), JsonConvert.SerializeObject(request));
+
+                    // example how to canvert screenshot byte array back to image
+                    if (request.Screenshots != null && request.Screenshots.Screenshots.Any())
+                    {
+                        foreach (var screenshot in request.Screenshots.Screenshots) {
+                            ImageConverter converter = new ImageConverter();
+                            var img = (Image)converter.ConvertFrom(screenshot.Image);
+                            img.Save($"{AppDomain.CurrentDomain.BaseDirectory}\\Logs\\{screenshot.Id.ToString()}.jpg", ImageFormat.Jpeg);
+                            img.Dispose();
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {

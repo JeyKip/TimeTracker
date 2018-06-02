@@ -13,6 +13,7 @@ using TimeTracker.Services.Sync;
 using TimeTracker.Services.Tracking;
 using TimeTracker.Services.Tracking.Applications;
 using TimeTracker.Services.Tracking.Hooks;
+using TimeTracker.Services.Tracking.Screenshots;
 
 namespace TimeTracker.Services
 {
@@ -31,6 +32,7 @@ namespace TimeTracker.Services
 
         private readonly ITrackInstalledApplicationsService _trackInstalledApplicationsService;
         private readonly ITrackOpenedApplicationsService _trackOpenedApplicationsService;
+        private readonly IScreenshotService _screenshotService;
         private readonly ITrackKeystrokeService _trackKeystrokeService;
         private readonly ITrackMouseClickService _trackMouseClickService;
         private readonly ISyncService _syncService;
@@ -46,6 +48,7 @@ namespace TimeTracker.Services
             ITrackOpenedApplicationsService trackOpenedApplicationsService,
             ITrackKeystrokeService trackKeystrokeService,
             ITrackMouseClickService trackMouseClickService,
+            IScreenshotService screenshotService,
             ISyncService syncService,
             KeystrokeAPI keystrokeAPI,
             ILogger<TaskRunner> logger)
@@ -56,6 +59,7 @@ namespace TimeTracker.Services
             _trackMouseClickService = trackMouseClickService ?? throw new ArgumentNullException(nameof(trackMouseClickService));
             _syncService = syncService ?? throw new ArgumentNullException(nameof(syncService));
             _keystrokeAPI = keystrokeAPI ?? throw new ArgumentNullException(nameof(keystrokeAPI));
+            _screenshotService = screenshotService ?? throw new ArgumentNullException(nameof(screenshotService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -70,6 +74,7 @@ namespace TimeTracker.Services
 
             ScheduleRecurringTask(async () => await _trackInstalledApplicationsService.TrackApplications(), 30000);
             ScheduleRecurringTask(async () => await _trackOpenedApplicationsService.TrackApplications(), 30000);
+            ScheduleRecurringTask(async () => await _screenshotService.TrackAsync(), 300000);
             ScheduleRecurringTask(async () => await _syncService.PushUpdatesAsync(), 30000);
             ScheduleKeystrokeTask();
             ScheduleMouseClickTask();

@@ -262,6 +262,8 @@
     <Compile Include="Services\Storage\Entities\Applications\InstalledApplicationsCheck.cs" />
     <Compile Include="Services\Storage\Entities\Hooks\MouseClicksSnapshot.cs" />
     <Compile Include="Services\Storage\Entities\Hooks\KeyboardClicksSnapshot.cs" />
+    <Compile Include="Services\Storage\Entities\Screenshots\ScreenshotItem.cs" />
+    <Compile Include="Services\Storage\Entities\Screenshots\ScreenshotSnapshot.cs" />
     <Compile Include="Services\Sync\ApiStub.cs" />
     <Compile Include="Services\Sync\ISyncService.cs" />
     <Compile Include="Services\Sync\ITrackApiWrapper.cs" />
@@ -279,6 +281,8 @@
     <Compile Include="Services\SignIn\SignInService.cs" />
     <Compile Include="Services\TaskRunner.cs" />
     <Compile Include="Services\Tracking\Hooks\TrackKeystrokeService.cs" />
+    <Compile Include="Services\Tracking\Screenshots\IScreenshotService.cs" />
+    <Compile Include="Services\Tracking\Screenshots\ScreenshotService.cs" />
     <Compile Include="WebView\ExtendedWebBrowser.cs">
       <SubType>Component</SubType>
     </Compile>

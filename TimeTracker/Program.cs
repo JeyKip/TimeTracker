@@ -14,6 +14,7 @@ using TimeTracker.Services.Sync;
 using TimeTracker.Services.Tracking;
 using TimeTracker.Services.Tracking.Applications;
 using TimeTracker.Services.Tracking.Hooks;
+using TimeTracker.Services.Tracking.Screenshots;
 
 namespace TimeTracker
 {
@@ -59,6 +60,8 @@ namespace TimeTracker
                 .AddSingleton(x => (ITakeSnapshot<MouseClicksSnapshot>)x.GetService<ITrackMouseClickService>())
                 .AddSingleton<ITakeSnapshot<InstalledApplicationsSnapshot>>(x => x.GetService<ITrackInstalledApplicationsService>())
                 .AddSingleton<ITakeSnapshot<OpenedApplicationsSnapshot>>(x => x.GetService<ITrackOpenedApplicationsService>())
+                .AddSingleton<IScreenshotService, ScreenshotService>()
+                .AddSingleton<ITakeSnapshot<ScreenshotSnapshot>>(x => (ITakeSnapshot<ScreenshotSnapshot>)x.GetService<IScreenshotService>())
                 .AddSingleton<ISyncService, SyncService>()
                 .AddSingleton<KeystrokeAPI>()
                 .AddTransient<ITrackApiWrapper, ApiStubWrapper>()
