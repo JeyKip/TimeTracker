@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TimeTracker.Services.Storage;
 using TimeTracker.Services.Tracking;
+using TimeTracker.Services.Tracking.Screenshots;
 
 namespace TimeTracker.Services.Sync
 {
@@ -19,6 +20,7 @@ namespace TimeTracker.Services.Sync
         private readonly ITakeSnapshot<InstalledApplicationsSnapshot> _installedApplicationsSnapshot;
         private readonly ITakeSnapshot<OpenedApplicationsSnapshot> _openedApplicationsSnapshot;
         private readonly ITakeSnapshot<DnsCacheSnapshot> _dnsCacheSnapshot;
+        private readonly ITakeSnapshot<ScreenshotSnapshot> _screenshotService;
         private readonly ITakeSnapshot<SystemPerformanceSnapshot> _systemPerformanceSnapshot;
 
         public SyncService(
@@ -28,6 +30,7 @@ namespace TimeTracker.Services.Sync
             ITakeSnapshot<InstalledApplicationsSnapshot> installedApplicationsSnapshot,
             ITakeSnapshot<OpenedApplicationsSnapshot> openedApplicationsSnapshot,
             ITakeSnapshot<DnsCacheSnapshot> dnsCacheSnapshot,
+            ITakeSnapshot<ScreenshotSnapshot> screenshotService,
             ITakeSnapshot<SystemPerformanceSnapshot> systemPerformanceSnapshot)
         {
             _trackApiWrapper = trackApiWrapper;
@@ -36,6 +39,7 @@ namespace TimeTracker.Services.Sync
             _installedApplicationsSnapshot = installedApplicationsSnapshot;
             _openedApplicationsSnapshot = openedApplicationsSnapshot;
             _dnsCacheSnapshot = dnsCacheSnapshot;
+            _screenshotService = screenshotService;
             _systemPerformanceSnapshot = systemPerformanceSnapshot;
         }
 
@@ -62,6 +66,7 @@ namespace TimeTracker.Services.Sync
                 InstalledApplications = _installedApplicationsSnapshot.TakeSnapshot(),
                 OpenedApplications = _openedApplicationsSnapshot.TakeSnapshot(),
                 DnsCache = _dnsCacheSnapshot.TakeSnapshot(),
+                Screenshots = _screenshotService.TakeSnapshot(),
                 SystemPerformance = _systemPerformanceSnapshot.TakeSnapshot()
             };
 
@@ -89,6 +94,7 @@ namespace TimeTracker.Services.Sync
             _installedApplicationsSnapshot.ClearSnapshot(result.InstalledAppsIdList);
             _openedApplicationsSnapshot.ClearSnapshot(result.OpenedAppsIdList);
             _dnsCacheSnapshot.ClearSnapshot(result.DnsCacheIdList);
+            _screenshotService.ClearSnapshot(request.Screenshots.Screenshots.Select(t=>t.Id));
             _systemPerformanceSnapshot.ClearSnapshot(result.SystemPerformanceIdList);
 
             LastSyncTime = DateTime.UtcNow;
