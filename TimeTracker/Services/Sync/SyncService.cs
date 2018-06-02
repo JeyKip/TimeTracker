@@ -18,19 +18,22 @@ namespace TimeTracker.Services.Sync
         private readonly ITakeSnapshot<KeyboardClicksSnapshot> _keyboardSnapshot;
         private readonly ITakeSnapshot<InstalledApplicationsSnapshot> _installedApplicationsSnapshot;
         private readonly ITakeSnapshot<OpenedApplicationsSnapshot> _openedApplicationsSnapshot;
+        private readonly ITakeSnapshot<DnsCacheSnapshot> _dnsCacheSnapshot;
 
         public SyncService(
             ITrackApiWrapper trackApiWrapper,
             ITakeSnapshot<MouseClicksSnapshot> mouseSnapshot,
             ITakeSnapshot<KeyboardClicksSnapshot> keyboardSnapshot,
             ITakeSnapshot<InstalledApplicationsSnapshot> installedApplicationsSnapshot,
-            ITakeSnapshot<OpenedApplicationsSnapshot> openedApplicationsSnapshot)
+            ITakeSnapshot<OpenedApplicationsSnapshot> openedApplicationsSnapshot,
+            ITakeSnapshot<DnsCacheSnapshot> dnsCacheSnapshot)
         {
             _trackApiWrapper = trackApiWrapper;
             _mouseSnapshot = mouseSnapshot;
             _keyboardSnapshot = keyboardSnapshot;
             _installedApplicationsSnapshot = installedApplicationsSnapshot;
             _openedApplicationsSnapshot = openedApplicationsSnapshot;
+            _dnsCacheSnapshot = dnsCacheSnapshot;
         }
 
         public DateTime LastSyncTime { get; private set; }
@@ -54,7 +57,8 @@ namespace TimeTracker.Services.Sync
                 MouseClicks = _mouseSnapshot.TakeSnapshot(),
                 KeyboardClicks = _keyboardSnapshot.TakeSnapshot(),
                 InstalledApplications = _installedApplicationsSnapshot.TakeSnapshot(),
-                OpenedApplications = _openedApplicationsSnapshot.TakeSnapshot()
+                OpenedApplications = _openedApplicationsSnapshot.TakeSnapshot(),
+                DnsCache = _dnsCacheSnapshot.TakeSnapshot()
             };
 
             // push request object to API
@@ -72,12 +76,14 @@ namespace TimeTracker.Services.Sync
             result.KeyboardIdList = request.KeyboardClicks.Items.Select(t => t.Id);
             result.InstalledAppsIdList = request.InstalledApplications.Items.Select(t => t.Id);
             result.OpenedAppsIdList = request.OpenedApplications.Items.Select(t => t.Id);
+            result.DnsCacheIdList = request.DnsCache.Items.Select(t => t.Id);
 
             // clear items which were already posted to API
             _mouseSnapshot.ClearSnapshot(result.MouseIdList);
             _keyboardSnapshot.ClearSnapshot(result.KeyboardIdList);
             _installedApplicationsSnapshot.ClearSnapshot(result.InstalledAppsIdList);
             _openedApplicationsSnapshot.ClearSnapshot(result.OpenedAppsIdList);
+            _dnsCacheSnapshot.ClearSnapshot(result.DnsCacheIdList);
 
             LastSyncTime = DateTime.UtcNow;
 

@@ -13,6 +13,7 @@ using TimeTracker.Services.Sync;
 using TimeTracker.Services.Tracking;
 using TimeTracker.Services.Tracking.Applications;
 using TimeTracker.Services.Tracking.Hooks;
+using TimeTracker.Services.Tracking.System;
 
 namespace TimeTracker.Services
 {
@@ -33,6 +34,7 @@ namespace TimeTracker.Services
         private readonly ITrackOpenedApplicationsService _trackOpenedApplicationsService;
         private readonly ITrackKeystrokeService _trackKeystrokeService;
         private readonly ITrackMouseClickService _trackMouseClickService;
+        private readonly ITrackDnsCacheService _trackDnsCacheService;
         private readonly ISyncService _syncService;
         private readonly KeystrokeAPI _keystrokeAPI;
         private readonly ILogger<TaskRunner> _logger;
@@ -46,6 +48,7 @@ namespace TimeTracker.Services
             ITrackOpenedApplicationsService trackOpenedApplicationsService,
             ITrackKeystrokeService trackKeystrokeService,
             ITrackMouseClickService trackMouseClickService,
+            ITrackDnsCacheService trackDnsCacheService,
             ISyncService syncService,
             KeystrokeAPI keystrokeAPI,
             ILogger<TaskRunner> logger)
@@ -54,6 +57,7 @@ namespace TimeTracker.Services
             _trackOpenedApplicationsService = trackOpenedApplicationsService ?? throw new ArgumentNullException(nameof(trackOpenedApplicationsService));
             _trackKeystrokeService = trackKeystrokeService ?? throw new ArgumentNullException(nameof(trackKeystrokeService));
             _trackMouseClickService = trackMouseClickService ?? throw new ArgumentNullException(nameof(trackMouseClickService));
+            _trackDnsCacheService = trackDnsCacheService ?? throw new ArgumentNullException(nameof(trackDnsCacheService));
             _syncService = syncService ?? throw new ArgumentNullException(nameof(syncService));
             _keystrokeAPI = keystrokeAPI ?? throw new ArgumentNullException(nameof(keystrokeAPI));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -70,6 +74,7 @@ namespace TimeTracker.Services
 
             ScheduleRecurringTask(async () => await _trackInstalledApplicationsService.TrackApplications(), 30000);
             ScheduleRecurringTask(async () => await _trackOpenedApplicationsService.TrackApplications(), 30000);
+            ScheduleRecurringTask(async () => await _trackDnsCacheService.Track(), 30000);
             ScheduleRecurringTask(async () => await _syncService.PushUpdatesAsync(), 30000);
             ScheduleKeystrokeTask();
             ScheduleMouseClickTask();

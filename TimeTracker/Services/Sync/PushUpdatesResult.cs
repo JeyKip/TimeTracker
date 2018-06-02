@@ -10,5 +10,6 @@ namespace TimeTracker.Services.Sync
         public IEnumerable<Guid> KeyboardIdList { get; set; }
         public IEnumerable<Guid> InstalledAppsIdList { get; set; }
         public IEnumerable<Guid> OpenedAppsIdList { get; set; }
+        public IEnumerable<Guid> DnsCacheIdList { get; set; }
     }
 }

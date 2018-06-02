@@ -3,9 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using TimeTracker.Services;
 using TimeTracker.Services.SignIn;
@@ -14,6 +11,7 @@ using TimeTracker.Services.Sync;
 using TimeTracker.Services.Tracking;
 using TimeTracker.Services.Tracking.Applications;
 using TimeTracker.Services.Tracking.Hooks;
+using TimeTracker.Services.Tracking.System;
 
 namespace TimeTracker
 {
@@ -55,10 +53,12 @@ namespace TimeTracker
                 .AddSingleton<ITrackOpenedApplicationsService, TrackOpenedApplicationsService>()
                 .AddSingleton<ITrackKeystrokeService, TrackKeystrokeService>()
                 .AddSingleton<ITrackMouseClickService, TrackMouseClickService>()
+                .AddSingleton<ITrackDnsCacheService, TrackDnsCacheService>()
                 .AddSingleton(x => (ITakeSnapshot<KeyboardClicksSnapshot>)x.GetService<ITrackKeystrokeService>())
                 .AddSingleton(x => (ITakeSnapshot<MouseClicksSnapshot>)x.GetService<ITrackMouseClickService>())
                 .AddSingleton<ITakeSnapshot<InstalledApplicationsSnapshot>>(x => x.GetService<ITrackInstalledApplicationsService>())
                 .AddSingleton<ITakeSnapshot<OpenedApplicationsSnapshot>>(x => x.GetService<ITrackOpenedApplicationsService>())
+                .AddSingleton<ITakeSnapshot<DnsCacheSnapshot>>(x => x.GetService<ITrackDnsCacheService>())
                 .AddSingleton<ISyncService, SyncService>()
                 .AddSingleton<KeystrokeAPI>()
                 .AddTransient<ITrackApiWrapper, ApiStubWrapper>()
