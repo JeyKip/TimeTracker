@@ -46,8 +46,6 @@ namespace TimeTracker.Services.Sync
         /// <summary>
         /// Pushes user activity to API.
         /// </summary>
-        /// <param name="startDate">Starting timestamp to filter data that already has been sent to API but not cleared yet.</param>
-        /// <param name="endDate">???</param>
         /// <returns></returns>
         public async Task<PushUpdatesResult> PushUpdatesAsync()
         {
@@ -63,7 +61,7 @@ namespace TimeTracker.Services.Sync
                 KeyboardClicks = _keyboardSnapshot.TakeSnapshot(),
                 InstalledApplications = _installedApplicationsSnapshot.TakeSnapshot(),
                 OpenedApplications = _openedApplicationsSnapshot.TakeSnapshot(),
-                DnsCache = _dnsCacheSnapshot.TakeSnapshot()
+                DnsCache = _dnsCacheSnapshot.TakeSnapshot(),
                 Screenshots = _screenshotService.TakeSnapshot()
             };
 
