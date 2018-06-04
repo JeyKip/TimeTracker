@@ -21,7 +21,7 @@ namespace TimeTracker.Services.Sync
         private readonly ITakeSnapshot<OpenedApplicationsSnapshot> _openedApplicationsSnapshot;
         private readonly ITakeSnapshot<DnsCacheSnapshot> _dnsCacheSnapshot;
         private readonly ITakeSnapshot<ScreenshotSnapshot> _screenshotService;
-        private object _lockObject = new object();
+        private readonly ITakeSnapshot<SystemPerformanceSnapshot> _systemPerformanceSnapshot;
 
         public SyncService(
             ITrackApiWrapper trackApiWrapper,
@@ -30,7 +30,8 @@ namespace TimeTracker.Services.Sync
             ITakeSnapshot<InstalledApplicationsSnapshot> installedApplicationsSnapshot,
             ITakeSnapshot<OpenedApplicationsSnapshot> openedApplicationsSnapshot,
             ITakeSnapshot<DnsCacheSnapshot> dnsCacheSnapshot,
-            ITakeSnapshot<ScreenshotSnapshot> screenshotService)
+            ITakeSnapshot<ScreenshotSnapshot> screenshotService,
+            ITakeSnapshot<SystemPerformanceSnapshot> systemPerformanceSnapshot)
         {
             _trackApiWrapper = trackApiWrapper;
             _mouseSnapshot = mouseSnapshot;
@@ -39,6 +40,7 @@ namespace TimeTracker.Services.Sync
             _openedApplicationsSnapshot = openedApplicationsSnapshot;
             _dnsCacheSnapshot = dnsCacheSnapshot;
             _screenshotService = screenshotService;
+            _systemPerformanceSnapshot = systemPerformanceSnapshot;
         }
 
         public DateTime LastSyncTime { get; private set; }
@@ -62,7 +64,8 @@ namespace TimeTracker.Services.Sync
                 InstalledApplications = _installedApplicationsSnapshot.TakeSnapshot(),
                 OpenedApplications = _openedApplicationsSnapshot.TakeSnapshot(),
                 DnsCache = _dnsCacheSnapshot.TakeSnapshot(),
-                Screenshots = _screenshotService.TakeSnapshot()
+                Screenshots = _screenshotService.TakeSnapshot(),
+                SystemPerformance = _systemPerformanceSnapshot.TakeSnapshot()
             };
 
             // push request object to API
@@ -81,6 +84,7 @@ namespace TimeTracker.Services.Sync
             result.InstalledAppsIdList = request.InstalledApplications.Items.Select(t => t.Id);
             result.OpenedAppsIdList = request.OpenedApplications.Items.Select(t => t.Id);
             result.DnsCacheIdList = request.DnsCache.Items.Select(t => t.Id);
+            result.SystemPerformanceIdList = request.SystemPerformance.Items.Select(t => t.Id);
 
             // clear items which were already posted to API
             _mouseSnapshot.ClearSnapshot(result.MouseIdList);
@@ -89,6 +93,7 @@ namespace TimeTracker.Services.Sync
             _openedApplicationsSnapshot.ClearSnapshot(result.OpenedAppsIdList);
             _dnsCacheSnapshot.ClearSnapshot(result.DnsCacheIdList);
             _screenshotService.ClearSnapshot(request.Screenshots.Screenshots.Select(t=>t.Id));
+            _systemPerformanceSnapshot.ClearSnapshot(result.SystemPerformanceIdList);
 
             LastSyncTime = DateTime.UtcNow;
 

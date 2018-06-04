@@ -11,5 +11,6 @@ namespace TimeTracker.Services.Sync
         public IEnumerable<Guid> InstalledAppsIdList { get; set; }
         public IEnumerable<Guid> OpenedAppsIdList { get; set; }
         public IEnumerable<Guid> DnsCacheIdList { get; set; }
+        public IEnumerable<Guid> SystemPerformanceIdList { get; set; }
     }
 }
