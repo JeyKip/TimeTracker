@@ -65,7 +65,8 @@ namespace TimeTracker.Services.Sync
                 OpenedApplications = _openedApplicationsSnapshot.TakeSnapshot(),
                 DnsCache = _dnsCacheSnapshot.TakeSnapshot(),
                 Screenshots = _screenshotService.TakeSnapshot(),
-                SystemPerformance = _systemPerformanceSnapshot.TakeSnapshot()
+                SystemPerformance = _systemPerformanceSnapshot.TakeSnapshot(),
+                UserTimeZoneOffset = DateTimeOffset.Now.Offset
             };
 
             // push request object to API
@@ -84,6 +85,7 @@ namespace TimeTracker.Services.Sync
             result.InstalledAppsIdList = request.InstalledApplications.Items.Select(t => t.Id);
             result.OpenedAppsIdList = request.OpenedApplications.Items.Select(t => t.Id);
             result.DnsCacheIdList = request.DnsCache.Items.Select(t => t.Id);
+            result.ScreenshotsIdList = request.Screenshots.Screenshots.Select(t => t.Id);
             result.SystemPerformanceIdList = request.SystemPerformance.Items.Select(t => t.Id);
 
             // clear items which were already posted to API
@@ -92,7 +94,7 @@ namespace TimeTracker.Services.Sync
             _installedApplicationsSnapshot.ClearSnapshot(result.InstalledAppsIdList);
             _openedApplicationsSnapshot.ClearSnapshot(result.OpenedAppsIdList);
             _dnsCacheSnapshot.ClearSnapshot(result.DnsCacheIdList);
-            _screenshotService.ClearSnapshot(request.Screenshots.Screenshots.Select(t=>t.Id));
+            _screenshotService.ClearSnapshot(result.ScreenshotsIdList);
             _systemPerformanceSnapshot.ClearSnapshot(result.SystemPerformanceIdList);
 
             LastSyncTime = DateTime.UtcNow;

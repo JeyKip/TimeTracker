@@ -1,4 +1,5 @@
-﻿using TimeTracker.Services.Storage;
+﻿using System;
+using TimeTracker.Services.Storage;
 
 namespace TimeTracker.Services.Sync
 {
@@ -11,5 +12,6 @@ namespace TimeTracker.Services.Sync
         public DnsCacheSnapshot DnsCache { get; internal set; }
         public ScreenshotSnapshot Screenshots { get; internal set; }
         public SystemPerformanceSnapshot SystemPerformance { get; internal set; }
+        public TimeSpan UserTimeZoneOffset { get; internal set; }
     }
 }

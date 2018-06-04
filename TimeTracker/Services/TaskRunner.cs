@@ -15,6 +15,7 @@ using TimeTracker.Services.Tracking.Applications;
 using TimeTracker.Services.Tracking.Hooks;
 using TimeTracker.Services.Tracking.System;
 using TimeTracker.Services.Tracking.Screenshots;
+using TimeTracker.Properties;
 
 namespace TimeTracker.Services
 {
@@ -79,12 +80,12 @@ namespace TimeTracker.Services
             _cancelTokenSource = new CancellationTokenSource();
             _cancellationToken = _cancelTokenSource.Token;
 
-            ScheduleRecurringTask(async () => await _trackInstalledApplicationsService.TrackApplications(), 30000);
-            ScheduleRecurringTask(async () => await _trackOpenedApplicationsService.TrackApplications(), 30000);
-            ScheduleRecurringTask(async () => await _trackDnsCacheService.Track(), 30000);
-            ScheduleRecurringTask(async () => await _screenshotService.TrackAsync(), 300000);
-            ScheduleRecurringTask(async () => await _trackSystemPerformanceService.Track(), 30000);
-            ScheduleRecurringTask(async () => await _syncService.PushUpdatesAsync(), 30000);
+            ScheduleRecurringTask(async () => await _trackInstalledApplicationsService.TrackApplications(), Settings.Default.TrackInstalledApplicationsInterval);
+            ScheduleRecurringTask(async () => await _trackOpenedApplicationsService.TrackApplications(), Settings.Default.TrackOpenedApplicationsInterval);
+            ScheduleRecurringTask(async () => await _trackDnsCacheService.Track(), Settings.Default.TrackDnsCacheInterval);
+            ScheduleRecurringTask(async () => await _screenshotService.TrackAsync(), Settings.Default.TrackScreenshotsInterval);
+            ScheduleRecurringTask(async () => await _trackSystemPerformanceService.Track(), Settings.Default.TrackSystemPerformanceInterval);
+            ScheduleRecurringTask(async () => await _syncService.PushUpdatesAsync(), Settings.Default.SyncInterval);
             ScheduleKeystrokeTask();
             ScheduleMouseClickTask();
         }
@@ -117,6 +118,9 @@ namespace TimeTracker.Services
             Task.Run(async () =>
             {
                 var sw = new Stopwatch();
+
+                // we do not need to track information instantly so we need delay before first run
+                Thread.Sleep(sleepTimeMs);
 
                 do
                 {

@@ -63,7 +63,7 @@ namespace TimeTracker
                 .AddSingleton<ITakeSnapshot<DnsCacheSnapshot>>(x => x.GetService<ITrackDnsCacheService>())
                 .AddSingleton<ITakeSnapshot<SystemPerformanceSnapshot>>(x => x.GetService<ITrackSystemPerformanceService>())
                 .AddSingleton<IScreenshotService, ScreenshotService>()
-                .AddSingleton<ITakeSnapshot<ScreenshotSnapshot>>(x => (ITakeSnapshot<ScreenshotSnapshot>)x.GetService<IScreenshotService>())
+                .AddSingleton(x => (ITakeSnapshot<ScreenshotSnapshot>)x.GetService<IScreenshotService>())
                 .AddSingleton<ISyncService, SyncService>()
                 .AddSingleton<KeystrokeAPI>()
                 .AddTransient<ITrackApiWrapper, ApiStubWrapper>()

@@ -40,6 +40,11 @@ namespace TimeTracker.Services.Tracking.System
             _uptimeCounter = new PerformanceCounter("System", "System Up Time");
 
             _snapshotItems = new ConcurrentDictionary<Guid, SystemPerformanceSnapshotItem>();
+
+            // just to start counters, because it gets 0 at the first time
+            _cpuUsageCounter.NextValue();
+            _ramUsageCounter.NextValue();
+            _uptimeCounter.NextValue();
         }
 
         #endregion
