@@ -1,15 +1,17 @@
-﻿using System.Threading.Tasks;
+﻿using System.Net.Http;
+using System.Threading.Tasks;
+using TimeTracker.Services.Storage.Entities.SignIn;
 
 namespace TimeTracker.Services.SignIn
 {
     public interface ISignInService
     {
-        string AccessToken { get; set; }
         bool IsAuthorized { get; }
-        string RefreshToken { get; set; }
-        string UserDisplayName { get; set; }
+        string UserDisplayName { get; }
 
         Task<SignInResult> SignInAsync();
         Task SignOutAsync();
+        Task RefreshTokenAsync();
+        SigninStore GetStatus();
     }
 }

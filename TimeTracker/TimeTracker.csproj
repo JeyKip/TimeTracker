@@ -300,6 +300,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Models\KeystrokeModel.cs" />
     <Compile Include="Services\Models\MouseClickModel.cs" />
+    <Compile Include="Services\SignIn\IdentityHttpHandler.cs" />
     <Compile Include="Services\SignIn\ISignInService.cs" />
     <Compile Include="Services\SignIn\SignInServiceStub.cs" />
     <Compile Include="Services\Storage\Entities\Applications\BaseApplicationSnapshot.cs" />
@@ -309,12 +310,15 @@
     <Compile Include="Services\Storage\Entities\Applications\InstalledApplication.cs" />
     <Compile Include="Services\Storage\Entities\Hooks\MouseClicksSnapshot.cs" />
     <Compile Include="Services\Storage\Entities\Hooks\KeyboardClicksSnapshot.cs" />
+    <Compile Include="Services\Storage\Entities\SignIn\SigninStore.cs" />
     <Compile Include="Services\Storage\Entities\System\DnsCacheInfo.cs" />
     <Compile Include="Services\Storage\Entities\System\DnsCacheSnapshot.cs" />
     <Compile Include="Services\Storage\Entities\Screenshots\ScreenshotItem.cs" />
     <Compile Include="Services\Storage\Entities\Screenshots\ScreenshotSnapshot.cs" />
     <Compile Include="Services\Storage\Entities\System\SystemPerformanceSnapshot.cs" />
     <Compile Include="Services\Storage\Entities\System\SystemPerformance.cs" />
+    <Compile Include="Services\Storage\IStorageService.cs" />
+    <Compile Include="Services\Storage\StorageService.cs" />
     <Compile Include="Services\Sync\ApiStub.cs" />
     <Compile Include="Services\Sync\ISyncService.cs" />
     <Compile Include="Services\Sync\ITrackApiWrapper.cs" />

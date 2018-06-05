@@ -65,6 +65,7 @@ namespace TimeTracker
                 .AddSingleton<IScreenshotService, ScreenshotService>()
                 .AddSingleton(x => (ITakeSnapshot<ScreenshotSnapshot>)x.GetService<IScreenshotService>())
                 .AddSingleton<ISyncService, SyncService>()
+                .AddSingleton<IStorageService, StorageService>()
                 .AddSingleton<KeystrokeAPI>()
                 .AddTransient<ITrackApiWrapper, ApiStubWrapper>()
                 .BuildServiceProvider();

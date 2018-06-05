@@ -85,7 +85,7 @@ namespace TimeTracker.Services
             ScheduleRecurringTask(async () => await _trackDnsCacheService.Track(), Settings.Default.TrackDnsCacheInterval);
             ScheduleRecurringTask(async () => await _screenshotService.TrackAsync(), Settings.Default.TrackScreenshotsInterval);
             ScheduleRecurringTask(async () => await _trackSystemPerformanceService.Track(), Settings.Default.TrackSystemPerformanceInterval);
-            ScheduleRecurringTask(async () => await _syncService.PushUpdatesAsync(), Settings.Default.SyncInterval);
+            ScheduleRecurringTask(async () => await _syncService.PushUpdatesAsync(), 30000);// Settings.Default.SyncInterval);
             ScheduleKeystrokeTask();
             ScheduleMouseClickTask();
         }

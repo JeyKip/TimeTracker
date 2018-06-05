@@ -45,6 +45,8 @@ namespace TimeTracker
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+            _signInService.RefreshTokenAsync().GetAwaiter().GetResult();
+            UserAuthorized(_signInService.IsAuthorized);
             RefreshMenuItems();
         }
 

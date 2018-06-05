@@ -3,9 +3,11 @@ using IdentityModel.OidcClient.Browser;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using TimeTracker.Properties;
+using TimeTracker.Services.Storage.Entities.SignIn;
 using TimeTracker.WebView;
 
 namespace TimeTracker.Services.SignIn
@@ -27,6 +29,8 @@ namespace TimeTracker.Services.SignIn
         public string AccessToken { get; set; }
 
         public string RefreshToken { get; set; }
+
+        public HttpMessageHandler RefreshHandler { get; private set; }
         #endregion
 
         #region Contructors
@@ -65,6 +69,20 @@ namespace TimeTracker.Services.SignIn
             AccessToken = string.Empty;
             RefreshToken = string.Empty;
             UserDisplayName = string.Empty;
+        }
+
+        public async Task RefreshTokenAsync()
+        {
+            await Task.Run(() => {
+                AccessToken = AccessToken = "123";
+                RefreshToken = RefreshToken = "456";
+                UserDisplayName = "Stub user Display Name";
+            });
+        }
+
+        public SigninStore GetStatus()
+        {
+            return new SigninStore();
         }
 
         #endregion

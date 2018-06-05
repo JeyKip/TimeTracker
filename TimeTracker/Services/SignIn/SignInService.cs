@@ -3,9 +3,12 @@ using IdentityModel.OidcClient.Browser;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using TimeTracker.Properties;
+using TimeTracker.Services.Storage;
+using TimeTracker.Services.Storage.Entities.SignIn;
 using TimeTracker.WebView;
 
 namespace TimeTracker.Services.SignIn
@@ -14,38 +17,30 @@ namespace TimeTracker.Services.SignIn
     {
         #region Fields and Properties
 
-        private OidcClient _oidcClient;
+        private readonly IStorageService _storageService;
 
         public bool IsAuthorized
         {
             get
             {
-                return !string.IsNullOrWhiteSpace(AccessToken);
+                return !string.IsNullOrWhiteSpace(Data?.AccessToken);
             }
         }
 
-        public string UserDisplayName { get; set; }
+        public string UserDisplayName {
+            get {
+                return Data?.UserDisplayName ?? string.Empty;
+            }
+        }
 
-        public string AccessToken { get; set; }
-
-        public string RefreshToken { get; set; }
+        private SigninStore Data { get; set; }
 
         #endregion
 
         #region Contructors
 
-        public SignInService() {
-            var options = new OidcClientOptions
-            {
-                Authority = "https://demo.identityserver.io",
-                ClientId = "native.hybrid",
-                Scope = "openid email api offline_access",
-                RedirectUri = "http://localhost/winforms.client",
-
-                Browser = new WinFormsEmbeddedBrowser()
-            };
-
-            _oidcClient = new OidcClient(options);
+        public SignInService(IStorageService storageService) {
+            _storageService = storageService;
         }
 
         #endregion
@@ -55,7 +50,8 @@ namespace TimeTracker.Services.SignIn
         public async Task<SignInResult> SignInAsync() {
             ResetInfo();
 
-            var result = new SignInResult(await _oidcClient.LoginAsync(new LoginRequest { BrowserDisplayMode = DisplayMode.Visible }));
+            var client = new OidcClient(GetIdentityOptions());
+            var result = new SignInResult(await client.LoginAsync(new LoginRequest { BrowserDisplayMode = DisplayMode.Visible }));
 
             if (result.IsError)
             {
@@ -64,29 +60,31 @@ namespace TimeTracker.Services.SignIn
             }
             else
             {
-                AccessToken = result.AccessToken;
-                RefreshToken = result.RefreshToken;
-                // set user display name as identity name
-                UserDisplayName = result.User?.Identity?.Name;
-                if (string.IsNullOrWhiteSpace(UserDisplayName))
+                var info = new SigninStore
+                {
+                    AccessToken = result.AccessToken,
+                    RefreshToken = result.RefreshToken,
+                    UserDisplayName = result.User?.Identity?.Name,
+                    //RefreshHandler = result.RefreshTokenHandler
+                };
+                if (string.IsNullOrWhiteSpace(info.UserDisplayName))
                 {
                     var displayNameClaim = result.User?.Claims?.FirstOrDefault(t => t.Type == Resources.DisplayNameClaimType);
                     if (displayNameClaim != null)
-                        UserDisplayName = displayNameClaim.Value;
+                        info.UserDisplayName = displayNameClaim.Value;
                 }
-
-                var sb = new StringBuilder(128);
-                foreach (var claim in result.User.Claims)
-                {
-                    sb.AppendLine($"{claim.Type}: {claim.Value}");
-                }
-                if (!string.IsNullOrWhiteSpace(result.RefreshToken))
-                {
-                    sb.AppendLine($"refresh token: {result.RefreshToken}");
+                //var sb = new StringBuilder(128);
+                //foreach (var claim in result.User.Claims)
+                //{
+                //    sb.AppendLine($"{claim.Type}: {claim.Value}");
+                //}
+                //if (!string.IsNullOrWhiteSpace(result.RefreshToken))
+                //{
+                //    sb.AppendLine($"refresh token: {result.RefreshToken}");
                     
-                }
+                //}
 
-                System.Diagnostics.Debug.WriteLine(sb.ToString());
+                Data = _storageService.SaveSignInInfo(info);
 
                 //_apiClient = new HttpClient(result.RefreshTokenHandler);
                 //_apiClient.BaseAddress = new Uri("https://demo.identityserver.io/api/");
@@ -97,16 +95,67 @@ namespace TimeTracker.Services.SignIn
 
         public async Task SignOutAsync()
         {
-            await _oidcClient.LogoutAsync();
+            var client = new OidcClient(GetIdentityOptions());
+            await client.LogoutAsync();
             ResetInfo();
         }
 
-        private void ResetInfo() {
-            AccessToken = string.Empty;
-            RefreshToken = string.Empty;
-            UserDisplayName = string.Empty;
+        public async Task RefreshTokenAsync()
+        {
+            try
+            {
+                var data = _storageService.LoadSignInInfo();
+                Data = data;
+                return;
+
+                if (data == null || string.IsNullOrWhiteSpace(data.RefreshToken))
+                    return;
+                var client = new OidcClient(GetIdentityOptions());
+                var result = await client.GetUserInfoAsync(data.AccessToken);
+                if (result.IsError)
+                    return;
+                var displayNameClaim = result.Claims?.FirstOrDefault(t => t.Type == Resources.DisplayNameClaimType);
+                if (displayNameClaim != null)
+                    data.UserDisplayName = displayNameClaim.Value;
+                Data = _storageService.SaveSignInInfo(data);
+            }
+            catch (Exception ex)
+            {
+                var message = ex.ToString();
+                throw;
+            }
         }
 
+        public SigninStore GetStatus()
+        {
+            return Data;
+        }
+
+        private void ResetInfo()
+        {
+            Data = _storageService.SaveSignInInfo(new SigninStore());
+        }
+
+        private OidcClientOptions GetIdentityOptions() {
+            //return new OidcClientOptions
+            //{
+            //    Authority = "https://demo.identityserver.io",
+            //    ClientId = "native.hybrid",
+            //    Scope = "openid email api offline_access",
+            //    RedirectUri = "http://localhost/winforms.client",
+
+            //    Browser = new WinFormsEmbeddedBrowser()
+            //};
+            return new OidcClientOptions
+            {
+                Authority = Settings.Default.IdentityUrl,
+                ClientId = Settings.Default.IdentityClientId,
+                Scope = Settings.Default.IdentityScope,
+                RedirectUri = Settings.Default.IdentityRedirectUri,
+
+                Browser = new WinFormsEmbeddedBrowser()
+            };
+        }
         #endregion
 
     }

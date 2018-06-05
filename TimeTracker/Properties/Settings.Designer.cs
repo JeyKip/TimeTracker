@@ -76,5 +76,50 @@ namespace TimeTracker.Properties {
                 return ((int)(this["SyncInterval"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data")]
+        public string StoragePath {
+            get {
+                return ((string)(this["StoragePath"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://mbox-dev-identity.azurewebsites.net/")]
+        public string IdentityUrl {
+            get {
+                return ((string)(this["IdentityUrl"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("tracker-desktop")]
+        public string IdentityClientId {
+            get {
+                return ((string)(this["IdentityClientId"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("openid profile api/v1 offline_access")]
+        public string IdentityScope {
+            get {
+                return ((string)(this["IdentityScope"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost/winforms.client")]
+        public string IdentityRedirectUri {
+            get {
+                return ((string)(this["IdentityRedirectUri"]));
+            }
+        }
     }
 }

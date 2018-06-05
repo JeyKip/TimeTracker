@@ -1,29 +1,35 @@
 ﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using TimeTracker.Properties;
+using TimeTracker.Services.SignIn;
+using TimeTracker.Services.Storage;
 
 namespace TimeTracker.Services.Sync
 {
     public class ApiStubWrapper : ITrackApiWrapper
     {
         private ILogger<ApiStubWrapper> _logger;
+        private readonly IStorageService _storageService;
 
-        public ApiStubWrapper(ILogger<ApiStubWrapper> logger)
+        public ApiStubWrapper(ILogger<ApiStubWrapper> logger, IStorageService storageService)
         {
             _logger = logger;
+            _storageService = storageService;
         }
 
         public async Task<SendAsyncResult> SendAsync(PushUpdatesRequest request)
         {
-            return await Task.Run(() =>
+            return await Task.Run(async () => 
             {
                 var result = new SendAsyncResult
                 {
@@ -49,6 +55,21 @@ namespace TimeTracker.Services.Sync
                             img.Dispose();
                         }
                     }
+
+                    // example of sending request to authorized API
+                    var signinInfo = _storageService.LoadSignInInfo();
+                    HttpClient apiClient = null;
+                    if (signinInfo != null)
+                    {
+                        apiClient = new HttpClient(new IdentityHttpHandler(storageService: _storageService, refreshToken: signinInfo.RefreshToken, accessToken: signinInfo.AccessToken));
+                    }
+                    else {
+                        apiClient = new HttpClient();
+                    }
+                    apiClient.BaseAddress = new Uri("https://demo.identityserver.io/api/");
+                    var apiResult = await apiClient.GetAsync("test");
+                    _logger.LogDebug(JsonConvert.SerializeObject(apiResult));
+                    _logger.LogDebug($"Result content: {JArray.Parse(await apiResult.Content.ReadAsStringAsync()).ToString()}");
                 }
                 catch (Exception ex)
                 {
